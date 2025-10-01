@@ -18,6 +18,42 @@
         <img src="~/images/Ekran Resmi 2025-10-01 20.17.33.png" alt="Foto 2" style="max-width:200px;"/>
         <img src="~/images/Ekran Resmi 2025-10-01 20.17.44.png" alt="Foto 3" style="max-width:200px;"/>
         <img src="~/images/Ekran Resmi 2025-10-01 20.30.59.png" alt="Foto 1" style="max-width:200px;" />
+        
 
     </div>
+    
+    <!-- Müzik Player + Buton -->
+    <audio id="bgmusic" preload="auto" loop 
+           src="@(Url.Content("~/music/hayirli-gunler.mp3"))">
+        Tarayıcınız ses dosyasını desteklemiyor.
+    </audio>
+
+    <div class="mt-3">
+        <button id="musicToggle" type="button" class="btn btn-primary">
+            🔊 Müzik Aç
+        </button>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const a = document.getElementById('bgmusic');
+    const btn = document.getElementById('musicToggle');
+
+    // Varsayılan: sessiz başlatmayı dene
+    a.muted = true;
+    a.play().catch(() => { console.log("Autoplay engellendi"); });
+
+    btn.addEventListener('click', () => {
+      a.muted = !a.muted;
+      if (!a.muted) {
+        a.play().catch(e => console.warn("Play failed", e));
+        btn.textContent = "🔇 Müzik Kapat";
+      } else {
+        btn.textContent = "🔊 Müzik Aç";
+      }
+    });
+  });
+</script>
+}

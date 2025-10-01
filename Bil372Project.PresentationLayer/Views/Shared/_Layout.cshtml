@@ -145,6 +145,71 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+
+@* ---- BG MUSIC (paste this before </body>) ---- *@
+
+<!-- 1) Doğrudan dosya yolunu test etmek için basit link -->
+<p class="text-center my-2">
+  <a href="@(Url.Content("~/music/hayirli-gunler.mp3"))" target="_blank">MP3 Test Linki</a>
+  @* Bu link 404 verirse dosya yolu/servis yanlış demektir. *@
+</p>
+
+<!-- 2) Audio etiketi (kontrolleri gizlenebilir) -->
+<audio id="bgmusic" preload="auto" loop
+       src="@(Url.Content("~/music/hayirli-gunler.mp3"))">
+  Tarayıcınız ses dosyasını desteklemiyor.
+</audio>
+
+<script>
+(function () {
+  const a = document.getElementById('bgmusic');
+  const box = document.getElementById('musicControls');
+  const btn = document.getElementById('musicToggle');
+
+  // Sessiz başlat (policy dostu)
+  a.muted = true;
+
+  // Autoplay denemesi
+  function tryPlay(silent = true){
+    a.muted = !!silent;
+    return a.play().then(() => {
+      // Başardıysa butonu gizle
+      if (box) box.style.display = 'none';
+      console.log('Audio playing. muted=', a.muted);
+    }).catch(err => {
+      console.warn('Autoplay engellendi:', err);
+      if (box) box.style.display = 'block'; // Butonu göster
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    tryPlay(true); // önce muted autoplay
+  });
+
+  // İlk kullanıcı etkileşiminde sesi açmayı dene
+  function unmuteAndPlay(){
+    tryPlay(false);
+    window.removeEventListener('click', unmuteAndPlay);
+    window.removeEventListener('keydown', unmuteAndPlay);
+    window.removeEventListener('touchstart', unmuteAndPlay);
+  }
+  window.addEventListener('click', unmuteAndPlay);
+  window.addEventListener('keydown', unmuteAndPlay);
+  window.addEventListener('touchstart', unmuteAndPlay);
+
+  // Butonla manuel aç/kapat
+  if (btn) {
+    btn.addEventListener('click', () => {
+      a.muted = false;
+      a.play().catch(e => console.error('Manual play failed', e));
+      box.style.display = 'none';
+    });
+  }
+})();
+</script>
+@* ---- /BG MUSIC ---- *@
+
+
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
