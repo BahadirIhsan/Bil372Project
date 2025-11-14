@@ -1,18 +1,21 @@
 @model Bil372Project.PresentationLayer.Models.RegisterViewModel
+
 @{
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
-    ViewData["Title"] = "Kayıt Ol";
+    ViewData["Title"] = "Kayıt Ol - Fit0LL";
 }
 
-<form asp-action="Register" method="post" class="needs-validation" novalidate>
-    <h4 class="mb-3 text-center">Yeni Hesap Oluştur</h4>
-    <p class="text-muted text-center mb-4">Sağlıklı yaşam yolculuğuna başlamak için bilgilerini paylaşman yeterli.</p>
+<h4 class="mb-3 text-center">Yeni Hesap Oluştur</h4>
+<p class="text-muted text-center mb-4">
+    Fit0LL ile kişisel beslenme planına hemen başlayabilirsin.
+</p>
 
+<form asp-action="Register" method="post" class="needs-validation" novalidate>
     <div class="mb-3">
         <label asp-for="FullName" class="form-label">Ad Soyad</label>
         <div class="input-icon">
             <span><i class="bi bi-person"></i></span>
-            <input asp-for="FullName" class="form-control form-control-lg" placeholder="Adın ve soyadın" />
+            <input asp-for="FullName" class="form-control" placeholder="Adın ve soyadın" />
         </div>
     </div>
 
@@ -20,7 +23,7 @@
         <label asp-for="Email" class="form-label">E-posta</label>
         <div class="input-icon">
             <span><i class="bi bi-envelope"></i></span>
-            <input asp-for="Email" class="form-control form-control-lg" type="email" placeholder="ornek@mail.com" />
+            <input asp-for="Email" class="form-control" type="email" placeholder="ornek@mail.com" />
         </div>
     </div>
 
@@ -28,7 +31,7 @@
         <label asp-for="Password" class="form-label">Şifre</label>
         <div class="input-icon">
             <span><i class="bi bi-lock"></i></span>
-            <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="En az 8 karakter" />
+            <input asp-for="Password" type="password" class="form-control" placeholder="En az 8 karakter" />
         </div>
     </div>
 
@@ -36,14 +39,14 @@
         <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
         <div class="input-icon">
             <span><i class="bi bi-check2"></i></span>
-            <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Şifreni tekrar gir" />
+            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifreni tekrar gir" />
         </div>
     </div>
 
-    <button type="submit" class="btn btn-success w-100 btn-lg">Kayıt Ol</button>
+    <button type="submit" class="btn btn-success w-100">Kayıt Ol</button>
 
     <p class="mt-4 text-center text-muted">
-        Zaten hesabın var mı?.....
+        Zaten hesabın var mı?
         <a asp-action="Login" class="fw-semibold">Giriş yap</a>
     </p>
 </form>

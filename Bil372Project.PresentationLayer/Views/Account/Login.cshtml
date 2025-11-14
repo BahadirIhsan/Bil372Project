@@ -1,18 +1,21 @@
 @model Bil372Project.PresentationLayer.Models.LoginViewModel
+
 @{
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
-    ViewData["Title"] = "Giriş Yap";
+    ViewData["Title"] = "Giriş Yap - Fit0LL";
 }
 
-<form asp-action="Login" method="post" class="needs-validation" novalidate>
-    <h4 class="mb-3 text-center">Giriş Yap</h4>
-    <p class="text-muted text-center mb-4">Hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.</p>
+<h4 class="mb-3 text-center">Tekrar hoş geldin</h4>
+<p class="text-muted text-center mb-4">
+    Hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.
+</p>
 
+<form asp-action="Login" method="post" class="needs-validation" novalidate>
     <div class="mb-3">
         <label asp-for="Email" class="form-label">E-posta</label>
         <div class="input-icon">
             <span><i class="bi bi-envelope"></i></span>
-            <input asp-for="Email" class="form-control form-control-lg" type="email" placeholder="ornek@mail.com" />
+            <input asp-for="Email" class="form-control" type="email" placeholder="ornek@mail.com" />
         </div>
     </div>
 
@@ -20,7 +23,7 @@
         <label asp-for="Password" class="form-label">Şifre</label>
         <div class="input-icon">
             <span><i class="bi bi-lock"></i></span>
-            <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="••••••" />
+            <input asp-for="Password" type="password" class="form-control" placeholder="******" />
         </div>
     </div>
 
@@ -29,11 +32,12 @@
         <label asp-for="RememberMe" class="form-check-label">Beni hatırla</label>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100 btn-lg">Giriş Yap</button>
+    <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
 
     <div class="text-center mt-4">
         <a href="#" class="link-muted d-block mb-2">Şifremi unuttum</a>
-        <span class="text-muted">Hesabın yok mu?
+        <span class="text-muted">
+            Hesabın yok mu?
             <a asp-action="Register" class="fw-semibold">Kayıt ol</a>
         </span>
     </div>
