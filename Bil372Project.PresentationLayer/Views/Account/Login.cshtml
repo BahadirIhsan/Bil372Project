@@ -4,13 +4,11 @@
     ViewData["Title"] = "Giriş Yap";
 }
 
-<form asp-action="Login" method="post" class="auth-form needs-validation" novalidate>
-    <div class="auth-form-heading text-center">
-        <h4>Giriş Yap</h4>
-        <p>Hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.</p>
-    </div>
+<form asp-action="Login" method="post" class="needs-validation" novalidate>
+    <h4 class="mb-3 text-center">Giriş Yap</h4>
+    <p class="text-muted text-center mb-4">Hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.</p>
 
-    <div class="auth-field">
+    <div class="mb-3">
         <label asp-for="Email" class="form-label">E-posta</label>
         <div class="input-icon">
             <span><i class="bi bi-envelope"></i></span>
@@ -18,7 +16,7 @@
         </div>
     </div>
 
-    <div class="auth-field">
+    <div class="mb-3">
         <label asp-for="Password" class="form-label">Şifre</label>
         <div class="input-icon">
             <span><i class="bi bi-lock"></i></span>
@@ -26,17 +24,17 @@
         </div>
     </div>
 
-    <div class="form-check auth-remember">
+    <div class="form-check mb-3">
         <input asp-for="RememberMe" class="form-check-input" />
         <label asp-for="RememberMe" class="form-check-label">Beni hatırla</label>
     </div>
 
-    <button type="submit" class="btn btn-auth w-100">Giriş Yap</button>
+    <button type="submit" class="btn btn-primary w-100 btn-lg">Giriş Yap</button>
 
-    <div class="auth-form-footer text-center">
-        <a href="#" class="link-muted d-block">Şifremi unuttum</a>
-        <span>Hesabın yok mu?
-            <a asp-action="Register">Kayıt ol</a>
+    <div class="text-center mt-4">
+        <a href="#" class="link-muted d-block mb-2">Şifremi unuttum</a>
+        <span class="text-muted">Hesabın yok mu?
+            <a asp-action="Register" class="fw-semibold">Kayıt ol</a>
         </span>
     </div>
 </form>
