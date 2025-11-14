@@ -19,10 +19,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
+// (ileride auth eklenecek)
+// app.UseAuthentication();
+// app.UseAuthorization();
 
+// Şimdilik giriş ekranı default olsun
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
