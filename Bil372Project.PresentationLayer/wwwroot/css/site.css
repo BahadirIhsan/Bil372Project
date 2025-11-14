@@ -654,9 +654,12 @@ body {
   }
 
   .auth-visual {
-    width: 100%;
-    min-height: 260px;
-    align-items: flex-end;
+    flex: 1;
+    background-image: url(https://hizliresim.com/f7go108);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
   }
 
   .auth-visual-overlay {
