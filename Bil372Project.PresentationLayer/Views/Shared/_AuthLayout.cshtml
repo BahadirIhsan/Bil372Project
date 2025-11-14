@@ -11,31 +11,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Nunito:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="auth-bg">
-<div class="auth-card">
-    <div class="row g-4 align-items-center">
-        <!-- Sol taraf: logo + kısa açıklama -->
-        <div class="col-md-5 d-none d-md-block">
-            <span class="auth-logo d-inline-block mb-3">Fit0LL</span>
-            <h2 class="h4 mb-3 text-white">Beslenme & yaşam asistanın</h2>
-            <p class="text-light-50 mb-0">
-                Günlük rutinini, hedefine uygun planlarla daha sağlıklı hale getir.
-            </p>
-        </div>
+<body class="auth-split-layout">
+    <div class="auth-shell">
+        <aside class="auth-visual">
+            <div class="auth-visual-overlay">
+                <span class="auth-badge">Fit0LL</span>
+                <h2 class="auth-visual-title">Hedeflerine odaklan</h2>
+                <p class="auth-visual-text">
+                    Dengeli beslenme ve aktif yaşamla dönüşümünü başlat. Sol kısma dilediğin görseli
+                    ekleyerek deneyimi kişiselleştirebilirsin.
+                </p>
+                <a class="auth-visual-link" href="/">Keşfetmeye başla</a>
+            </div>
+        </aside>
 
-        <!-- Sağ taraf: form -->
-        <div class="col-12 col-md-7">
-            @RenderBody()
-        </div>
+        <main class="auth-panel">
+            <div class="auth-panel-inner">
+                @RenderBody()
+            </div>
+        </main>
     </div>
-</div>
 </body>
 
 </html>
