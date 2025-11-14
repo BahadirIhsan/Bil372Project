@@ -5,40 +5,49 @@
     ViewData["Title"] = "Giriş Yap - Fit0LL";
 }
 
-<h4 class="mb-3 text-center">Tekrar hoş geldin</h4>
-<p class="text-muted text-center mb-4">
-    Hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.
-</p>
+<div class="auth-header text-center">
+    <h1 class="auth-title">Giriş Yap</h1>
+    <p class="auth-subtitle">
+        Fit0LL hesabına giriş yaparak kişisel planına ulaş ve gelişimini takip et.
+    </p>
+</div>
 
-<form asp-action="Login" method="post" class="needs-validation" novalidate>
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label">E-posta</label>
-        <div class="input-icon">
-            <span><i class="bi bi-envelope"></i></span>
-            <input asp-for="Email" class="form-control" type="email" placeholder="ornek@mail.com" />
-        </div>
+<form asp-action="Login" method="post" class="auth-form" novalidate>
+    <div asp-validation-summary="ModelOnly" class="text-danger auth-validation"></div>
+
+    <div class="auth-form-group">
+        <label asp-for="Email" class="auth-label">E-posta</label>
+        <input asp-for="Email" class="auth-input" type="email" placeholder="ornek@mail.com" />
+        <span asp-validation-for="Email" class="text-danger auth-validation"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label">Şifre</label>
-        <div class="input-icon">
-            <span><i class="bi bi-lock"></i></span>
-            <input asp-for="Password" type="password" class="form-control" placeholder="******" />
-        </div>
+    <div class="auth-form-group">
+        <label asp-for="Password" class="auth-label">Şifre</label>
+        <input asp-for="Password" type="password" class="auth-input" placeholder="******" />
+        <span asp-validation-for="Password" class="text-danger auth-validation"></span>
     </div>
 
-    <div class="form-check mb-3">
-        <input asp-for="RememberMe" class="form-check-input" />
-        <label asp-for="RememberMe" class="form-check-label">Beni hatırla</label>
+    <div class="auth-form-footer">
+        <label class="auth-remember">
+            <input asp-for="RememberMe" class="form-check-input" />
+            <span>Beni hatırla</span>
+        </label>
+        <a href="#" class="auth-link">Şifremi unuttum</a>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+    <button type="submit" class="auth-submit">Giriş Yap</button>
 
-    <div class="text-center mt-4">
-        <a href="#" class="link-muted d-block mb-2">Şifremi unuttum</a>
-        <span class="text-muted">
-            Hesabın yok mu?
-            <a asp-action="Register" class="fw-semibold">Kayıt ol</a>
-        </span>
+    <div class="auth-divider" role="presentation">
+        <span>Diğer seçenekler</span>
     </div>
+
+    <a class="auth-social-btn" href="#">
+        <i class="bi bi-facebook"></i>
+        <span>Facebook ile devam et</span>
+    </a>
+
+    <p class="auth-switch mt-4">
+        Hesabın yok mu?
+        <a asp-action="Register" class="auth-link">Kayıt ol</a>
+    </p>
 </form>
