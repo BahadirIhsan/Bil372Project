@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Bil372Project.BusinessLayer;
 using Bil372Project.BusinessLayer.Dtos;
 using Bil372Project.BusinessLayer.Services;
+using Bil372Project.PresentationLayer.Controllers.Helper;
 using Bil372Project.PresentationLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,22 @@ public class HomeController : Controller
         _userMeasurementService = userMeasurementService;
         _userService = userService;
     }
-    public IActionResult Index()
+    [HttpGet]
+    public async Task<IActionResult> Index()
     {
-        return View();
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var stats = await _userMeasurementService.GetDashboardStatsAsync(userId);
+
+        var model = new DashboardViewModel
+        {
+            CurrentWeightKg          = stats.CurrentWeightKg,
+            CurrentBmi               = stats.CurrentBmi,
+            WeightChangeLastMonthKg  = stats.WeightChangeLastMonthKg,
+            BmiCategory              = stats.BmiCategory
+        };
+
+        return View(model);
     }
 
     [HttpGet]
@@ -41,6 +55,12 @@ public class HomeController : Controller
             model.Allergies     = dto.Allergies;
             model.Diseases      = dto.Diseases;
             model.DislikedFoods = dto.DislikedFoods;
+            model.LastUpdatedAt = dto.LastUpdatedAt;
+            model.LastUpdatedText = TimeHelper.GetRelativeTimeText(dto.LastUpdatedAt);
+        }
+        else
+        {
+            model.LastUpdatedText = "Henüz hiç güncellenmedi";
         }
 
         return View(model);
@@ -68,7 +88,8 @@ public class HomeController : Controller
 
         await _userMeasurementService.SaveMeasureAsync(userId, input);
 
-        // İstersen "başarıyla kaydedildi" mesajı için TempData kullanabiliriz
+        TempData["ValuesUpdated"] = "Ölçümleriniz güncellendi.";
+        
         return RedirectToAction("Values");
     }
 

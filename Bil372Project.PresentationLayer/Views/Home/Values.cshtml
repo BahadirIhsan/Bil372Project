@@ -13,10 +13,14 @@
                     <h3 class="fw-semibold mb-1">Güncel Ölçümlerini Güncelle</h3>
                     <p class="text-muted mb-0">Doğru ölçümler daha kişiselleştirilmiş bir program sunmamıza yardımcı olur.</p>
                 </div>
-                <span class="badge bg-info-subtle text-info fw-semibold px-3 py-2 mt-3 mt-md-0">Son Güncelleme: 2 gün önce</span>
+                <span class="badge bg-info-subtle text-info fw-semibold px-3 py-2 mt-3 mt-md-0">
+                    Son Güncelleme: @Model.LastUpdatedText
+                </span>
             </div>
 
             <form asp-action="Values" method="post" class="row g-4">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger mb-2"></div>
                 <div class="col-md-6">
                     <label class="form-section-title">Temel Bilgiler</label>
                     <div class="card border-0 shadow-sm p-3">
@@ -30,15 +34,15 @@
                         </div>
                         <div class="mb-3">
                             <label asp-for="Age" class="form-label">Yaş</label>
-                            <input asp-for="Age" class="form-control form-control-lg rounded-3" type="number" />
+                            <input asp-for="Age" class="form-control form-control-lg rounded-3" type="number"/>
                         </div>
                         <div class="mb-3">
                             <label asp-for="HeightCm" class="form-label">Boy (cm)</label>
-                            <input asp-for="HeightCm" class="form-control form-control-lg rounded-3" type="number" step="0.1" />
+                            <input asp-for="HeightCm" class="form-control form-control-lg rounded-3" type="number" step="0.1"/>
                         </div>
                         <div class="mb-2">
                             <label asp-for="WeightKg" class="form-label">Kilo (kg)</label>
-                            <input asp-for="WeightKg" class="form-control form-control-lg rounded-3" type="number" step="0.1" />
+                            <input asp-for="WeightKg" class="form-control form-control-lg rounded-3" type="number" step="0.1"/>
                         </div>
                         <p class="form-note mb-0"><i class="bi bi-info-circle me-1"></i> Değerlerini düzenli olarak güncelle, grafikteki değişimi izle.</p>
                     </div>

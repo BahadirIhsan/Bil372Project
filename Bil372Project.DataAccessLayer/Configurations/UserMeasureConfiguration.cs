@@ -38,8 +38,9 @@ public class UserMeasureConfiguration : IEntityTypeConfiguration<UserMeasure>
 
         // User ilişki (1 User - 1 Measure)
         entity.HasOne(m => m.User)
-            .WithOne() // AppUser içinde navigation yoksa böyle kalabilir
-            .HasForeignKey<UserMeasure>(m => m.UserId)
+            .WithMany()                 // 1 kullanıcının çok ölçümü
+            .HasForeignKey(m => m.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

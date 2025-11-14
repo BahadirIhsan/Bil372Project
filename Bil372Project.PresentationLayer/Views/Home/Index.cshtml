@@ -1,3 +1,5 @@
+@model Bil372Project.PresentationLayer.Models.DashboardViewModel
+
 @{
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     ViewData["Title"] = "Gösterge Paneli";
@@ -31,14 +33,59 @@
 <div class="stat-grid">
     <div class="stat-card">
         <h5>Güncel Kilo</h5>
-        <span class="value">72.4 <small class="fs-6">kg</small></span>
-        <span class="text-success fw-semibold"><i class="bi bi-arrow-down-right me-1"></i>Son ay -1.2 kg</span>
+        <span class="value">
+            @if (Model.CurrentWeightKg.HasValue)
+            {
+                @Model.CurrentWeightKg.Value.ToString("0.0") <small class="fs-6">kg</small>
+            }
+            else
+            {
+                @:-
+            }
+        </span>
+
+        @if (Model.WeightChangeLastMonthKg.HasValue)
+        {
+            var diff = Model.WeightChangeLastMonthKg.Value;
+            if (diff < 0)
+            {
+                <span class="text-success fw-semibold">
+                    <i class="bi bi-arrow-down-right me-1"></i>
+                    Son ay @Math.Abs(diff).ToString("0.0") kg azaldı
+                </span>
+            }
+            else if (diff > 0)
+            {
+                <span class="text-danger fw-semibold">
+                    <i class="bi bi-arrow-up-right me-1"></i>
+                    Son ay @diff.ToString("0.0") kg arttı
+                </span>
+            }
+            else
+            {
+                <span class="text-muted fw-semibold">
+                    Son ay kilon değişmedi
+                </span>
+            }
+        }
+        else
+        {
+            <span class="text-muted fw-semibold">
+                Son ay için yeterli veri yok
+            </span>
+        }
     </div>
+
     <div class="stat-card">
         <h5>BMI</h5>
-        <span class="value">23.1</span>
-        <span class="text-muted">Sağlıklı aralıkta</span>
+        <span class="value">
+            @(Model.CurrentBmi.HasValue ? Model.CurrentBmi.Value.ToString("0.0") : "-")
+        </span>
+        <span class="text-muted">
+            @(!string.IsNullOrEmpty(Model.BmiCategory) ? Model.BmiCategory : "Henüz hesaplanmadı")
+        </span>
     </div>
+
     <div class="stat-card">
         <h5>Haftalık Aktivite</h5>
         <span class="value">5 <small class="fs-6">seans</small></span>
@@ -46,8 +93,8 @@
     </div>
     <div class="stat-card">
         <h5>Su Takibi</h5>
-        <span class="value">6/8</span>
-        <span class="text-muted">Hadi 2 bardak daha!</span>
+        <span class="value">8</span>
+        <span class="text-muted">Hadi 8 bardak su içelim bugün!</span>
     </div>
 </div>
 

@@ -9,4 +9,7 @@ public class MeasurementViewModel
     public string Allergies { get; set; } = string.Empty;
     public string Diseases { get; set; } = string.Empty;
     public string DislikedFoods { get; set; } = string.Empty;
+    
+    public DateTime? LastUpdatedAt { get; set; }
+    public string? LastUpdatedText { get; set; }
 }
