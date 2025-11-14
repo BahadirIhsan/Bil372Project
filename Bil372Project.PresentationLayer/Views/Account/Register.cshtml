@@ -5,48 +5,44 @@
     ViewData["Title"] = "Kayıt Ol - Fit0LL";
 }
 
-<h4 class="mb-3 text-center">Yeni Hesap Oluştur</h4>
-<p class="text-muted text-center mb-4">
-    Fit0LL ile kişisel beslenme planına hemen başlayabilirsin.
-</p>
+<div class="auth-header text-center">
+    <h1 class="auth-title">Hesap Oluştur</h1>
+    <p class="auth-subtitle">
+        Fit0LL ile kişisel beslenme planına hemen başlayabilirsin.
+    </p>
+</div>
 
-<form asp-action="Register" method="post" class="needs-validation" novalidate>
-    <div class="mb-3">
-        <label asp-for="FullName" class="form-label">Ad Soyad</label>
-        <div class="input-icon">
-            <span><i class="bi bi-person"></i></span>
-            <input asp-for="FullName" class="form-control" placeholder="Adın ve soyadın" />
-        </div>
+<form asp-action="Register" method="post" class="auth-form" novalidate>
+    <div asp-validation-summary="ModelOnly" class="text-danger auth-validation"></div>
+
+    <div class="auth-form-group">
+        <label asp-for="FullName" class="auth-label">Ad Soyad</label>
+        <input asp-for="FullName" class="auth-input" placeholder="Adın ve soyadın" />
+        <span asp-validation-for="FullName" class="text-danger auth-validation"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label">E-posta</label>
-        <div class="input-icon">
-            <span><i class="bi bi-envelope"></i></span>
-            <input asp-for="Email" class="form-control" type="email" placeholder="ornek@mail.com" />
-        </div>
+    <div class="auth-form-group">
+        <label asp-for="Email" class="auth-label">E-posta</label>
+        <input asp-for="Email" class="auth-input" type="email" placeholder="ornek@mail.com" />
+        <span asp-validation-for="Email" class="text-danger auth-validation"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Password" class="form-label">Şifre</label>
-        <div class="input-icon">
-            <span><i class="bi bi-lock"></i></span>
-            <input asp-for="Password" type="password" class="form-control" placeholder="En az 8 karakter" />
-        </div>
+    <div class="auth-form-group">
+        <label asp-for="Password" class="auth-label">Şifre</label>
+        <input asp-for="Password" type="password" class="auth-input" placeholder="En az 8 karakter" />
+        <span asp-validation-for="Password" class="text-danger auth-validation"></span>
     </div>
 
-    <div class="mb-4">
-        <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
-        <div class="input-icon">
-            <span><i class="bi bi-check2"></i></span>
-            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Şifreni tekrar gir" />
-        </div>
+    <div class="auth-form-group">
+        <label asp-for="ConfirmPassword" class="auth-label">Şifre Tekrar</label>
+        <input asp-for="ConfirmPassword" type="password" class="auth-input" placeholder="Şifreni tekrar gir" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger auth-validation"></span>
     </div>
 
-    <button type="submit" class="btn btn-success w-100">Kayıt Ol</button>
+    <button type="submit" class="auth-submit">Kayıt Ol</button>
 
-    <p class="mt-4 text-center text-muted">
+    <p class="auth-switch mt-4">
         Zaten hesabın var mı?
-        <a asp-action="Login" class="fw-semibold">Giriş yap</a>
+        <a asp-action="Login" class="auth-link">Giriş yap</a>
     </p>
 </form>
