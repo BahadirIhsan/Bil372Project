@@ -9,43 +9,65 @@
     <meta charset="utf-8" />
     <title>@title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-<div class="d-flex">
+<div class="app-shell">
+    <aside class="app-sidebar">
+        <div class="brand-block">
+            <div class="brand-logo">Fit0LL</div>
+            <p class="mb-0 small text-white-50">Kişisel beslenme ve fitness asistanın</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "Index") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="Index">
+                <i class="bi bi-speedometer2"></i> Gösterge Paneli
+            </a>
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "Values") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="Values">
+                <i class="bi bi-person-heart"></i> Değerlerim
+            </a>
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "History") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="History">
+                <i class="bi bi-graph-up"></i> Geçmiş Bilgilerim
+            </a>
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "NewProgram") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="NewProgram">
+                <i class="bi bi-magic"></i> Yeni Program Al
+            </a>
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "Settings") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="Settings">
+                <i class="bi bi-gear"></i> Ayarlar
+            </a>
 
-    <!-- Sol menü -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark flex-column align-items-start p-3"
-         style="min-height:100vh; min-width:220px;">
-        <a class="navbar-brand mb-4" asp-controller="Home" asp-action="Index">Fit0LL</a>
+            <div class="logout-link">
+                <a class="nav-link text-danger"
+                   asp-controller="Account" asp-action="Login">
+                    <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                </a>
+            </div>
+        </nav>
+    </aside>
 
-        <ul class="navbar-nav flex-column w-100">
-            <li class="nav-item mb-1">
-                <a class="nav-link" asp-controller="Home" asp-action="Values">Değerlerim</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link" asp-controller="Home" asp-action="History">Geçmiş Bilgilerim</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link" asp-controller="Home" asp-action="NewProgram">Yeni Program Al</a>
-            </li>
-            <li class="nav-item mb-1">
-                <a class="nav-link" asp-controller="Home" asp-action="Settings">Ayarlar</a>
-            </li>
-            <li class="nav-item mt-4">
-                <a class="nav-link text-danger" asp-controller="Account" asp-action="Login">Çıkış Yap</a>
-                <!-- ileride gerçek Logout yapılacak -->
-            </li>
-        </ul>
-    </nav>
-
-    <!-- İçerik -->
-    <div class="flex-grow-1 p-4">
-        @RenderBody()
+    <div class="app-main">
+        <header class="main-toolbar">
+            <h1 class="mb-2">@title</h1>
+            <p class="text-muted">Bugün hedeflerine biraz daha yaklaş!</p>
+        </header>
+        <main class="content-wrapper">
+            @RenderBody()
+        </main>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@RenderSection("Scripts", required: false)
 </body>
 </html>
