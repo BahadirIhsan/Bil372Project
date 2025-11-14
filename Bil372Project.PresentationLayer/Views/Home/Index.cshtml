@@ -1,7 +1,116 @@
-﻿@{
-Layout = "~/Views/Shared/_MainLayout.cshtml";
-ViewData["Title"] = "Ana Sayfa";
+@{
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    ViewData["Title"] = "Gösterge Paneli";
 }
 
-<h3>Hoş geldin!</h3>
-<p>Burada özet bilgileri, son diyet programını vs. göstereceğiz.</p>
+<div class="glass-card mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-7">
+            <h2 class="fw-bold mb-3">Merhaba! Bugün kendin için ne yapacaksın?</h2>
+            <p class="text-muted mb-4">Günlük hedeflerine göz at, değerlerini güncelle ve sana özel önerileri keşfet.
+                Fit0LL seni yolculuğun boyunca desteklemek için burada.</p>
+            <div class="d-flex flex-wrap gap-3">
+                <a asp-action="Values" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-pencil-square me-2"></i> Değerlerimi Güncelle
+                </a>
+                <a asp-action="NewProgram" class="btn btn-outline-info btn-lg px-4">
+                    <i class="bi bi-stars me-2"></i> Yeni Program Oluştur
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="position-relative p-4 rounded-4 text-white" style="background: linear-gradient(135deg,#30d0d0,#0575e6);">
+                <h5 class="text-uppercase text-white-50">Günün İpucu</h5>
+                <p class="fs-5 fw-semibold mb-4">Su tüketimini takip et! Her saat başı bir bardak su içmek enerji seviyeni korumana yardımcı olur.</p>
+                <span class="badge bg-white text-primary fw-semibold px-3 py-2">Hedef: 8 Bardak</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <h5>Güncel Kilo</h5>
+        <span class="value">72.4 <small class="fs-6">kg</small></span>
+        <span class="text-success fw-semibold"><i class="bi bi-arrow-down-right me-1"></i>Son ay -1.2 kg</span>
+    </div>
+    <div class="stat-card">
+        <h5>BMI</h5>
+        <span class="value">23.1</span>
+        <span class="text-muted">Sağlıklı aralıkta</span>
+    </div>
+    <div class="stat-card">
+        <h5>Haftalık Aktivite</h5>
+        <span class="value">5 <small class="fs-6">seans</small></span>
+        <span class="text-muted">Hedef: 4 seans</span>
+    </div>
+    <div class="stat-card">
+        <h5>Su Takibi</h5>
+        <span class="value">6/8</span>
+        <span class="text-muted">Hadi 2 bardak daha!</span>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-xl-7">
+        <div class="glass-card h-100">
+            <h4 class="section-title">Bugünkü Planın</h4>
+            <table class="table-modern">
+                <thead>
+                <tr>
+                    <th>Öğün</th>
+                    <th>Öneri</th>
+                    <th>Kalori</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="fw-semibold">Kahvaltı</td>
+                    <td>Yulaf ezmesi, taze meyveler, badem sütü</td>
+                    <td>420 kcal</td>
+                    <td><span class="badge-soft">Hazır</span></td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Öğle</td>
+                    <td>Ispanaklı tavuk salatası, kinoalı tabak</td>
+                    <td>560 kcal</td>
+                    <td><span class="badge-soft">Hazır</span></td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Ara Öğün</td>
+                    <td>Yoğurt &amp; ceviz karışımı</td>
+                    <td>210 kcal</td>
+                    <td><span class="badge-soft">Hazır</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="glass-card h-100">
+            <h4 class="section-title">Motivasyon</h4>
+            <div class="program-step">
+                <div class="step-index">1</div>
+                <div>
+                    <h6>Günün hedefini belirle</h6>
+                    <p class="text-muted small mb-0">Bugün 8.000 adım atmayı hedefle ve uygulamada işaretlemeyi unutma.</p>
+                </div>
+            </div>
+            <div class="program-step">
+                <div class="step-index">2</div>
+                <div>
+                    <h6>Esneme molaları ekle</h6>
+                    <p class="text-muted small mb-0">Her 90 dakikada bir 5 dakikalık esneme planla. Vücudunu dinç tut!</p>
+                </div>
+            </div>
+            <div class="program-step mb-0">
+                <div class="step-index">3</div>
+                <div>
+                    <h6>Akşam değerlendirmesi yap</h6>
+                    <p class="text-muted small mb-0">Günün sonunda hislerini not al, hedeflerine ne kadar yaklaştığını gözden geçir.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

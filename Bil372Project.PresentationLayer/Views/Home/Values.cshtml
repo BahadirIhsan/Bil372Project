@@ -5,49 +5,96 @@
     ViewData["Title"] = "Değerlerim";
 }
 
-<h3>Değerlerim</h3>
-<hr />
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                <div>
+                    <h3 class="fw-semibold mb-1">Güncel Ölçümlerini Güncelle</h3>
+                    <p class="text-muted mb-0">Doğru ölçümler daha kişiselleştirilmiş bir program sunmamıza yardımcı olur.</p>
+                </div>
+                <span class="badge bg-info-subtle text-info fw-semibold px-3 py-2 mt-3 mt-md-0">Son Güncelleme: 2 gün önce</span>
+            </div>
 
-<form asp-action="Values" method="post" class="mt-3">
+            <form asp-action="Values" method="post" class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-section-title">Temel Bilgiler</label>
+                    <div class="card border-0 shadow-sm p-3">
+                        <div class="mb-3">
+                            <label class="form-label">Cinsiyet</label>
+                            <select asp-for="Gender" class="form-select form-select-lg rounded-3">
+                                <option value="">Seçiniz</option>
+                                <option value="Male">Erkek</option>
+                                <option value="Female">Kadın</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Age" class="form-label">Yaş</label>
+                            <input asp-for="Age" class="form-control form-control-lg rounded-3" type="number" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="HeightCm" class="form-label">Boy (cm)</label>
+                            <input asp-for="HeightCm" class="form-control form-control-lg rounded-3" type="number" step="0.1" />
+                        </div>
+                        <div class="mb-2">
+                            <label asp-for="WeightKg" class="form-label">Kilo (kg)</label>
+                            <input asp-for="WeightKg" class="form-control form-control-lg rounded-3" type="number" step="0.1" />
+                        </div>
+                        <p class="form-note mb-0"><i class="bi bi-info-circle me-1"></i> Değerlerini düzenli olarak güncelle, grafikteki değişimi izle.</p>
+                    </div>
+                </div>
 
-    <div class="mb-3">
-        <label class="form-label">Cinsiyet</label>
-        <select asp-for="Gender" class="form-select">
-            <option value="">Seçiniz</option>
-            <option value="Male">Erkek</option>
-            <option value="Female">Kadın</option>
-        </select>
+                <div class="col-md-6">
+                    <label class="form-section-title">Sağlık Bilgileri</label>
+                    <div class="card border-0 shadow-sm p-3 h-100">
+                        <div class="mb-3">
+                            <label asp-for="Allergies" class="form-label">Alerjiler</label>
+                            <textarea asp-for="Allergies" class="form-control rounded-3" rows="2" placeholder="Örn. Yer fıstığı, laktoz..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Diseases" class="form-label">Hastalıklar</label>
+                            <textarea asp-for="Diseases" class="form-control rounded-3" rows="2" placeholder="Örn. Diyabet, çölyak..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DislikedFoods" class="form-label">Sevilmeyen Ürünler</label>
+                            <textarea asp-for="DislikedFoods" class="form-control rounded-3" rows="3" placeholder="Örn. Brokoli, süt, kırmızı et..."></textarea>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="form-note"><i class="bi bi-shield-check me-1"></i> Bilgilerin yalnızca sana özel program oluşturmak için kullanılır.</span>
+                            <button type="submit" class="btn btn-primary btn-lg px-4">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Age" class="form-label">Yaş</label>
-        <input asp-for="Age" class="form-control" type="number" />
+    <div class="col-lg-4">
+        <div class="glass-card h-100">
+            <h5 class="section-title">Ölçüm İpuçları</h5>
+            <ul class="list-unstyled mb-0">
+                <li class="d-flex gap-3 mb-3">
+                    <span class="text-primary"><i class="bi bi-sunrise fs-4"></i></span>
+                    <div>
+                        <h6 class="mb-1">Sabah Tartıl</h6>
+                        <p class="text-muted small mb-0">En doğru sonuç için uyanır uyanmaz ve aç karna tartıl.</p>
+                    </div>
+                </li>
+                <li class="d-flex gap-3 mb-3">
+                    <span class="text-primary"><i class="bi bi-droplet fs-4"></i></span>
+                    <div>
+                        <h6 class="mb-1">Su Tüketimini Not Al</h6>
+                        <p class="text-muted small mb-0">Günlük su tüketimini not etmek metabolizmanı takip etmene yardımcı olur.</p>
+                    </div>
+                </li>
+                <li class="d-flex gap-3">
+                    <span class="text-primary"><i class="bi bi-journal-check fs-4"></i></span>
+                    <div>
+                        <h6 class="mb-1">Alerjileri Güncel Tut</h6>
+                        <p class="text-muted small mb-0">Yeni bir hassasiyet fark edersen hemen ekle, tariflerini ona göre ayarlayalım.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="HeightCm" class="form-label">Boy (cm)</label>
-        <input asp-for="HeightCm" class="form-control" type="number" step="0.1" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="WeightKg" class="form-label">Kilo (kg)</label>
-        <input asp-for="WeightKg" class="form-control" type="number" step="0.1" />
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Allergies" class="form-label">Alerjiler</label>
-        <textarea asp-for="Allergies" class="form-control" rows="2"></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Diseases" class="form-label">Hastalıklar</label>
-        <textarea asp-for="Diseases" class="form-control" rows="2"></textarea>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="DislikedFoods" class="form-label">Sevilmeyen Ürünler</label>
-        <textarea asp-for="DislikedFoods" class="form-control" rows="2"></textarea>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Kaydet</button>
-</form>
+</div>

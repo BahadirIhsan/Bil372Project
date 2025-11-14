@@ -3,5 +3,116 @@
     ViewData["Title"] = "Yeni Program Al";
 }
 
-<h3>Yeni Program Al</h3>
-<p>Buraya diyet istek formu / AI öneri bölümü gelecek.</p>
+<div class="glass-card mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-lg-6">
+            <h2 class="fw-bold mb-3">Sana özel bir plan oluşturalım</h2>
+            <p class="text-muted">Fit0LL, hedeflerin, tercihlerin ve sağlık bilgilerin doğrultusunda en iyi programı tasarlar. Aşağıdaki formu doldur, birkaç dakika içinde önerileri keşfet.</p>
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="program-step flex-grow-1 mb-0">
+                    <div class="step-index">1</div>
+                    <div>
+                        <h6>Tercihlerini paylaş</h6>
+                        <p class="text-muted small mb-0">Beslenme düzeni, sevdiğin ve kaçındığın yiyecekler.</p>
+                    </div>
+                </div>
+                <div class="program-step flex-grow-1 mb-0">
+                    <div class="step-index">2</div>
+                    <div>
+                        <h6>Hedefini belirt</h6>
+                        <p class="text-muted small mb-0">Kilo verme, kas kazanma ya da daha zinde hissetme.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="bg-white rounded-4 shadow-sm p-4 card-glow">
+                <h5 class="fw-semibold mb-3">Hazır mısın?</h5>
+                <p class="text-muted mb-4">Formu tamamla, uzmanlarımızın önerdiği egzersiz ve beslenme planını dakikalar içinde al.</p>
+                <ul class="list-unstyled small text-muted mb-0">
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Kişisel hedeflerine göre hazırlanır.</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Uzman diyetisyen ve antrenör onaylıdır.</li>
+                    <li><i class="bi bi-check-circle text-success me-2"></i> Haftalık hatırlatmalarla seni motive eder.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card">
+    <form class="row g-4">
+        <div class="col-lg-4">
+            <label class="form-section-title">Hedefin</label>
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <div class="mb-3">
+                    <label class="form-label">Öncelik</label>
+                    <select class="form-select form-select-lg rounded-3">
+                        <option>Seçiniz</option>
+                        <option>Kilo vermek</option>
+                        <option>Kilo almak</option>
+                        <option>Form korumak</option>
+                        <option>Daha enerjik hissetmek</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hedef kilo</label>
+                    <input type="number" class="form-control form-control-lg rounded-3" placeholder="Örn. 68" />
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Süre (hafta)</label>
+                    <input type="number" class="form-control form-control-lg rounded-3" placeholder="12" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <label class="form-section-title">Beslenme Tercihleri</label>
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <div class="mb-3">
+                    <label class="form-label">Beslenme stili</label>
+                    <select class="form-select rounded-3">
+                        <option>Normal</option>
+                        <option>Vejetaryen</option>
+                        <option>Vegan</option>
+                        <option>Glütensiz</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Sevilen öğünler</label>
+                    <textarea class="form-control rounded-3" rows="3" placeholder="Örn. Çorba, balık, salata"></textarea>
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Kaçınmak istediklerin</label>
+                    <textarea class="form-control rounded-3" rows="3" placeholder="Örn. Şekerli içecekler"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <label class="form-section-title">Aktivite &amp; Yaşam</label>
+            <div class="card border-0 shadow-sm p-3 h-100">
+                <div class="mb-3">
+                    <label class="form-label">Aktivite seviyesi</label>
+                    <select class="form-select rounded-3">
+                        <option>Hareketsiz</option>
+                        <option>Hafif aktif</option>
+                        <option>Orta aktif</option>
+                        <option>Çok aktif</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Günlük tempo</label>
+                    <input type="text" class="form-control rounded-3" placeholder="Örn. Masa başı, ayakta çalışma" />
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Ek notların</label>
+                    <textarea class="form-control rounded-3" rows="3" placeholder="Bizi bilgilendir..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary btn-lg px-5"><i class="bi bi-magic me-2"></i> Programı Oluştur</button>
+        </div>
+    </form>
+</div>
