@@ -4,11 +4,13 @@
     ViewData["Title"] = "Kayıt Ol";
 }
 
-<form asp-action="Register" method="post" class="needs-validation" novalidate>
-    <h4 class="mb-3 text-center">Yeni Hesap Oluştur</h4>
-    <p class="text-muted text-center mb-4">Sağlıklı yaşam yolculuğuna başlamak için bilgilerini paylaşman yeterli.</p>
+<form asp-action="Register" method="post" class="auth-form needs-validation" novalidate>
+    <div class="auth-form-heading text-center">
+        <h4>Yeni Hesap Oluştur</h4>
+        <p>Sağlıklı yaşam yolculuğuna başlamak için bilgilerini paylaşman yeterli.</p>
+    </div>
 
-    <div class="mb-3">
+    <div class="auth-field">
         <label asp-for="FullName" class="form-label">Ad Soyad</label>
         <div class="input-icon">
             <span><i class="bi bi-person"></i></span>
@@ -16,7 +18,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
+    <div class="auth-field">
         <label asp-for="Email" class="form-label">E-posta</label>
         <div class="input-icon">
             <span><i class="bi bi-envelope"></i></span>
@@ -24,7 +26,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
+    <div class="auth-field">
         <label asp-for="Password" class="form-label">Şifre</label>
         <div class="input-icon">
             <span><i class="bi bi-lock"></i></span>
@@ -32,7 +34,7 @@
         </div>
     </div>
 
-    <div class="mb-4">
+    <div class="auth-field">
         <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
         <div class="input-icon">
             <span><i class="bi bi-check2"></i></span>
@@ -40,10 +42,11 @@
         </div>
     </div>
 
-    <button type="submit" class="btn btn-success w-100 btn-lg">Kayıt Ol</button>
+    <button type="submit" class="btn btn-auth w-100">Kayıt Ol</button>
 
-    <p class="mt-4 text-center text-muted">
-        Zaten hesabın var mı?
-        <a asp-action="Login" class="fw-semibold">Giriş yap</a>
-    </p>
+    <div class="auth-form-footer text-center">
+        <span>Zaten hesabın var mı?
+            <a asp-action="Login">Giriş yap</a>
+        </span>
+    </div>
 </form>
