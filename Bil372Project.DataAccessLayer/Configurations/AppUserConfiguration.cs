@@ -27,7 +27,16 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         entity.HasIndex(u => u.Email)
             .IsUnique();
 
-        // İleride ilişkiler de burada:
-        // entity.HasMany(u => u.DietPrograms)...
+        entity.Property(u => u.PhoneNumber)
+            .HasMaxLength(20);
+
+        entity.Property(u => u.City)
+            .HasMaxLength(100);
+
+        entity.Property(u => u.Country)
+            .HasMaxLength(100);
+
+        entity.Property(u => u.Bio)
+            .HasMaxLength(500);
     }
 }

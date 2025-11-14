@@ -1,7 +1,53 @@
+@model Bil372Project.PresentationLayer.Models.MeasurementViewModel
+
 @{
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     ViewData["Title"] = "Değerlerim";
 }
 
 <h3>Değerlerim</h3>
-<p>Boy, kilo, yağ oranı, hedefler vb. burada listelenecek.</p>
+<hr />
+
+<form asp-action="Values" method="post" class="mt-3">
+
+    <div class="mb-3">
+        <label class="form-label">Cinsiyet</label>
+        <select asp-for="Gender" class="form-select">
+            <option value="">Seçiniz</option>
+            <option value="Male">Erkek</option>
+            <option value="Female">Kadın</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Age" class="form-label">Yaş</label>
+        <input asp-for="Age" class="form-control" type="number" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HeightCm" class="form-label">Boy (cm)</label>
+        <input asp-for="HeightCm" class="form-control" type="number" step="0.1" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="WeightKg" class="form-label">Kilo (kg)</label>
+        <input asp-for="WeightKg" class="form-control" type="number" step="0.1" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Allergies" class="form-label">Alerjiler</label>
+        <textarea asp-for="Allergies" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Diseases" class="form-label">Hastalıklar</label>
+        <textarea asp-for="Diseases" class="form-control" rows="2"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DislikedFoods" class="form-label">Sevilmeyen Ürünler</label>
+        <textarea asp-for="DislikedFoods" class="form-control" rows="2"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+</form>

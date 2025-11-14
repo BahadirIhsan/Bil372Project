@@ -1,19 +1,75 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Bil372Project.BusinessLayer;
+using Bil372Project.BusinessLayer.Dtos;
+using Bil372Project.BusinessLayer.Services;
 using Bil372Project.PresentationLayer.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bil372Project.PresentationLayer.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly IUserMeasurementService _userMeasurementService;
+    private readonly IAppUserService _userService;
+
+    public HomeController(IUserMeasurementService userMeasurementService, IAppUserService userService)
+    {
+        _userMeasurementService = userMeasurementService;
+        _userService = userService;
+    }
     public IActionResult Index()
     {
         return View();
     }
 
-    public IActionResult Values()
+    [HttpGet]
+    public async Task<IActionResult> Values()
     {
-        return View();
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var dto = await _userMeasurementService.GetMeasureAsync(userId);
+
+        var model = new MeasurementViewModel();
+
+        if (dto != null)
+        {
+            model.Gender        = dto.Gender;
+            model.Age           = dto.Age;
+            model.HeightCm      = dto.HeightCm;
+            model.WeightKg      = dto.WeightKg;
+            model.Allergies     = dto.Allergies;
+            model.Diseases      = dto.Diseases;
+            model.DislikedFoods = dto.DislikedFoods;
+        }
+
+        return View(model);
+    }
+
+    // POST: Değerlerim
+    [HttpPost]
+    public async Task<IActionResult> Values(MeasurementViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var input = new UserMeasureInput
+        {
+            Gender        = model.Gender,
+            Age           = model.Age,
+            HeightCm      = model.HeightCm,
+            WeightKg      = model.WeightKg,
+            Allergies     = model.Allergies,
+            Diseases      = model.Diseases,
+            DislikedFoods = model.DislikedFoods
+        };
+
+        await _userMeasurementService.SaveMeasureAsync(userId, input);
+
+        // İstersen "başarıyla kaydedildi" mesajı için TempData kullanabiliriz
+        return RedirectToAction("Values");
     }
 
     public IActionResult History()
@@ -26,8 +82,101 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Settings()
-    {
-        return View();
-    }
+    [HttpGet]
+        public async Task<IActionResult> Settings()
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var settings = await _userService.GetSettingsAsync(userId);
+            if (settings == null) return NotFound();
+
+            var model = new UserSettingsViewModel
+            {
+                FullName    = settings.FullName,
+                Email       = settings.Email,
+                PhoneNumber = settings.PhoneNumber,
+                BirthDate   = settings.BirthDate,
+                City        = settings.City,
+                Country     = settings.Country,
+                Bio         = settings.Bio
+            };
+
+            ViewBag.PasswordModel = new ChangePasswordViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UserSettingsViewModel model)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var dto = new UserSettingsDto
+            {
+                FullName    = model.FullName,
+                Email       = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                BirthDate   = model.BirthDate,
+                City        = model.City,
+                Country     = model.Country,
+                Bio         = model.Bio
+            };
+
+            var (success, errorMessage) = await _userService.UpdateSettingsAsync(userId, dto);
+
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage ?? "Profil güncellenemedi.");
+                ViewBag.PasswordModel = new ChangePasswordViewModel();
+                return View("Settings", model);
+            }
+
+            TempData["ProfileUpdated"] = "Profil bilgileriniz güncellendi.";
+            return RedirectToAction("Settings");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            if (model.NewPassword != model.ConfirmNewPassword)
+            {
+                ModelState.AddModelError(nameof(model.ConfirmNewPassword),
+                    "Yeni şifre ile tekrar şifreniz uyuşmuyor.");
+            }
+
+            var settings = await _userService.GetSettingsAsync(userId);
+            var profileModel = new UserSettingsViewModel
+            {
+                FullName    = settings?.FullName ?? "",
+                Email       = settings?.Email ?? "",
+                PhoneNumber = settings?.PhoneNumber,
+                BirthDate   = settings?.BirthDate,
+                City        = settings?.City,
+                Country     = settings?.Country,
+                Bio         = settings?.Bio
+            };
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.PasswordModel = model;
+                return View("Settings", profileModel);
+            }
+
+            var (success, errorMessage) = await _userService.ChangePasswordAsync(
+                userId,
+                model.CurrentPassword,
+                model.NewPassword
+            );
+
+            if (!success)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage ?? "Şifre değiştirilemedi.");
+                ViewBag.PasswordModel = model;
+                return View("Settings", profileModel);
+            }
+
+            TempData["PasswordUpdated"] = "Şifreniz başarıyla güncellendi.";
+            return RedirectToAction("Settings");
+        }
 }

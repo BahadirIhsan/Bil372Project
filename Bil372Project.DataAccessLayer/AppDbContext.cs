@@ -11,7 +11,8 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<AppUser> Users { get; set; }
-
+    public DbSet<UserMeasure> UserMeasures { get; set; }   // 🔹 BURAYI EKLE
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // AppUserConfiguration vs. hepsini otomatik uygular

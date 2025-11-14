@@ -1,7 +1,110 @@
+@model Bil372Project.PresentationLayer.Models.UserSettingsViewModel
+@using Bil372Project.PresentationLayer.Models
+
 @{
+    var pwdModel = (ChangePasswordViewModel)(ViewBag.PasswordModel ?? new ChangePasswordViewModel());
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     ViewData["Title"] = "Ayarlar";
 }
 
-<h3>Ayarlar</h3>
-<p>Profil bilgileri, şifre değiştirme vs. burada olacak.</p>
+<h3 class="mb-3">Hesap Ayarları</h3>
+
+@if (TempData["ProfileUpdated"] != null)
+{
+    <div class="alert alert-success">@TempData["ProfileUpdated"]</div>
+}
+
+@if (TempData["PasswordUpdated"] != null)
+{
+    <div class="alert alert-success">@TempData["PasswordUpdated"]</div>
+}
+
+<div class="row g-4 mt-2">
+    <!-- Hesap / Profil Bilgileri -->
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Profil Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="UpdateProfile" method="post">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label">Ad Soyad</label>
+                            <input asp-for="FullName" class="form-control" placeholder="Adınız Soyadınız" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">E-posta</label>
+                        <input asp-for="Email" class="form-control" type="email" placeholder="mail@example.com" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="+90..." />
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label asp-for="BirthDate" class="form-label">Doğum Tarihi</label>
+                            <input asp-for="BirthDate" class="form-control" type="date" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="City" class="form-label">Şehir</label>
+                            <input asp-for="City" class="form-control" placeholder="Ankara" />
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Country" class="form-label">Ülke</label>
+                            <input asp-for="Country" class="form-control" placeholder="Türkiye" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Bio" class="form-label">Hakkımda</label>
+                        <textarea asp-for="Bio" class="form-control" rows="3"
+                                  placeholder="Kısaca kendini tanıt..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Şifre Değiştir -->
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0">Şifre Değiştir</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="ChangePassword" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Mevcut Şifre</label>
+                        <input asp-for="@pwdModel.CurrentPassword" name="CurrentPassword"
+                               class="form-control" type="password" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Şifre</label>
+                        <input asp-for="@pwdModel.NewPassword" name="NewPassword"
+                               class="form-control" type="password" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Şifre (Tekrar)</label>
+                        <input asp-for="@pwdModel.ConfirmNewPassword" name="ConfirmNewPassword"
+                               class="form-control" type="password" />
+                    </div>
+
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-key"></i> Şifreyi Güncelle
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

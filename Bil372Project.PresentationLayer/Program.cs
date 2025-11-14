@@ -1,3 +1,4 @@
+using Bil372Project.BusinessLayer.Services;
 using Bil372Project.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -24,7 +25,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
+
+// dependency injection
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddScoped<IUserMeasurementService, UserMeasurementService>();
+
 var app = builder.Build();
+
+
 
 using (var scope = app.Services.CreateScope())
 {
