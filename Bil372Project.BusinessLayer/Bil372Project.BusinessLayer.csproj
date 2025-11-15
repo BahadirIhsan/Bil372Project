@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Bil372Project.DataAccessLayer\Bil372Project.DataAccessLayer.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="8.0.0" />
+    </ItemGroup>
+
 </Project>

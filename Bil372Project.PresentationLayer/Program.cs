@@ -3,10 +3,22 @@ using Bil372Project.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Bil372Project.BusinessLayer.FluentValidation;
+
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+// FluentValidation entegrasyonu
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+
+builder.Services.AddValidatorsFromAssemblyContaining<UserSettingsValidation>();
+builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordDtoValidator>();
+
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

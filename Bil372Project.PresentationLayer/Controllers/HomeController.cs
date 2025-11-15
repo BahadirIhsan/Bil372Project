@@ -160,12 +160,14 @@ public class HomeController : Controller
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+            // 1) ViewModel düzeyinde yeni şifre kontrolü
             if (model.NewPassword != model.ConfirmNewPassword)
             {
                 ModelState.AddModelError(nameof(model.ConfirmNewPassword),
                     "Yeni şifre ile tekrar şifreniz uyuşmuyor.");
             }
 
+            // Profil bilgilerini (Settings sayfası için) her durumda çekeceğiz
             var settings = await _userService.GetSettingsAsync(userId);
             var profileModel = new UserSettingsViewModel
             {
@@ -178,17 +180,24 @@ public class HomeController : Controller
                 Bio         = settings?.Bio
             };
 
+            // 2) Validation hatası varsa direkt Settings view'ine geri dön
             if (!ModelState.IsValid)
             {
                 ViewBag.PasswordModel = model;
                 return View("Settings", profileModel);
             }
 
-            var (success, errorMessage) = await _userService.ChangePasswordAsync(
-                userId,
-                model.CurrentPassword,
-                model.NewPassword
-            );
+            // 3) ViewModel → Dto mapping
+            var dto = new ChangePasswordDto
+            {
+                UserId             = userId,
+                CurrentPassword    = model.CurrentPassword,
+                NewPassword        = model.NewPassword,
+                ConfirmNewPassword = model.ConfirmNewPassword
+            };
+
+            // 4) Artık servise DTO gönderiyoruz
+            var (success, errorMessage) = await _userService.ChangePasswordAsync(dto);
 
             if (!success)
             {

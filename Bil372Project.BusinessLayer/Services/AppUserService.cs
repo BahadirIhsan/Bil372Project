@@ -21,12 +21,9 @@ public class AppUserService : IAppUserService
             .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
     }
 
-    public async Task<(bool success, string? errorMessage)> RegisterAsync(
-        string fullName,
-        string email,
-        string password)
+    public async Task<(bool success, string? errorMessage)> RegisterAsync(RegisterUserDto dto)
     {
-        var exists = await _context.Users.AnyAsync(u => u.Email == email);
+        var exists = await _context.Users.AnyAsync(u => u.Email == dto.Email);
         if (exists)
         {
             return (false, "Bu e-posta ile kayıtlı kullanıcı var.");
@@ -34,9 +31,14 @@ public class AppUserService : IAppUserService
 
         var user = new AppUser
         {
-            FullName = fullName,
-            Email = email,
-            Password = password // ileride hash
+            FullName    = dto.FullName,
+            Email       = dto.Email,
+            Password    = HashPassword(dto.Password), // DİKKAT: artık hash kullan
+            PhoneNumber = dto.PhoneNumber,
+            BirthDate   = dto.BirthDate,
+            City        = dto.City,
+            Country     = dto.Country,
+            Bio         = dto.Bio
         };
 
         _context.Users.Add(user);
@@ -97,19 +99,16 @@ public class AppUserService : IAppUserService
             return (true, null);
         }
 
-        public async Task<(bool success, string? errorMessage)> ChangePasswordAsync(
-            int userId,
-            string currentPassword,
-            string newPassword)
+        public async Task<(bool success, string? errorMessage)> ChangePasswordAsync(ChangePasswordDto dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == dto.UserId);
             if (user == null)
                 return (false, "Kullanıcı bulunamadı.");
 
-            if (!VerifyPassword(user.Password, currentPassword))
+            if (!VerifyPassword(user.Password, dto.CurrentPassword))
                 return (false, "Mevcut şifreniz yanlış.");
 
-            user.Password = HashPassword(newPassword);
+            user.Password = HashPassword(dto.NewPassword);
             await _context.SaveChangesAsync();
 
             return (true, null);
