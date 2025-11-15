@@ -16,7 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 
-builder.Services.AddValidatorsFromAssemblyContaining<UserSettingsValidation>();
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordDtoValidator>();
 
 

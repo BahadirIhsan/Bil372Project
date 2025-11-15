@@ -8,10 +8,10 @@ public interface IAppUserService
     // login için tuttuğum servis
     Task<AppUser?> LoginAsync(string email, string password);
     // kayıt için tuttuğum servis
-    Task<(bool success, string? errorMessage)> ChangePasswordAsync(ChangePasswordDto dto);    
+    Task<ServiceResult> ChangePasswordAsync(ChangePasswordDto dto);
     Task<UserSettingsDto?> GetSettingsAsync(int userId);
 
-    Task<(bool success, string? errorMessage)> UpdateSettingsAsync(int userId, UserSettingsDto input);
+    Task<ServiceResult> UpdateSettingsAsync(int userId, UserSettingsDto input);
 
-    Task<(bool success, string? errorMessage)> RegisterAsync(RegisterUserDto dto);
+    Task<ServiceResult> RegisterAsync(RegisterUserDto dto);
 }

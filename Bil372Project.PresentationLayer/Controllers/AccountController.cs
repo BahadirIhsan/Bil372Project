@@ -1,21 +1,21 @@
 using System.Security.Claims;
-using Bil372Project.DataAccessLayer;
-using Bil372Project.EntityLayer.Entities;
+using Bil372Project.BusinessLayer;
+using Bil372Project.BusinessLayer.Dtos;
+using Bil372Project.BusinessLayer.Services;
 using Bil372Project.PresentationLayer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bil372Project.PresentationLayer.Controllers;
 
-    public class AccountController : Controller
-    {
-        private readonly AppDbContext _context;
+public class AccountController : Controller
+{
+        private readonly IAppUserService _userService;
 
-        public AccountController(AppDbContext context)
+        public AccountController(IAppUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -30,8 +30,7 @@ namespace Bil372Project.PresentationLayer.Controllers;
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
+            var user = await _userService.LoginAsync(model.Email, model.Password);
 
             if (user == null)
             {
@@ -68,24 +67,22 @@ namespace Bil372Project.PresentationLayer.Controllers;
                 return View(model);
 
             // Aynı email var mı kontrol
-            bool exists = await _context.Users.AnyAsync(u => u.Email == model.Email);
-            if (exists)
+            var dto = new RegisterUserDto
             {
-                ModelState.AddModelError(nameof(model.Email), "Bu e-posta ile kayıtlı kullanıcı var.");
+                FullName        = model.FullName,
+                Email           = model.Email,
+                Password        = model.Password,
+                ConfirmPassword = model.ConfirmPassword
+            };
+
+            var result = await _userService.RegisterAsync(dto);
+
+            if (!result.Succeeded)
+            {
+                AddErrorsToModelState(result);
                 return View(model);
             }
 
-            var user = new AppUser
-            {
-                FullName = model.FullName,
-                Email = model.Email,
-                Password = model.Password  // ileride hashleme yapacağım unutma
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // Kayıttan sonra login sayfasına
             return RedirectToAction("Login");
         }
 
@@ -93,5 +90,20 @@ namespace Bil372Project.PresentationLayer.Controllers;
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+        private void AddErrorsToModelState(ServiceResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                var key = string.IsNullOrWhiteSpace(error.Key)
+                    ? string.Empty
+                    : error.Key;
+
+                foreach (var message in error.Value)
+                {
+                    ModelState.AddModelError(key, message);
+                }
+            }
         }
     }
