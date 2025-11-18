@@ -180,7 +180,7 @@ public class HomeController : Controller
             };
 
             if (!ModelState.IsValid)
-            {
+            {   
                 ViewBag.PasswordModel = model;
                 return View("Settings", profileModel);
             }
