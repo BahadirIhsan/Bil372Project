@@ -131,6 +131,12 @@ public class HomeController : Controller
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+            if (!ModelState.IsValid)
+            {
+                ViewBag.PasswordModel = new ChangePasswordViewModel();
+                return View("Settings", model);
+            }
+
             var dto = new UserSettingsDto
             {
                 FullName    = model.FullName,
@@ -142,11 +148,11 @@ public class HomeController : Controller
                 Bio         = model.Bio
             };
 
-            var (success, errorMessage) = await _userService.UpdateSettingsAsync(userId, dto);
+            var result = await _userService.UpdateSettingsAsync(userId, dto);
 
-            if (!success)
+            if (!result.Succeeded)
             {
-                ModelState.AddModelError(string.Empty, errorMessage ?? "Profil güncellenemedi.");
+                AddErrorsToModelState(result);
                 ViewBag.PasswordModel = new ChangePasswordViewModel();
                 return View("Settings", model);
             }
@@ -160,12 +166,7 @@ public class HomeController : Controller
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            if (model.NewPassword != model.ConfirmNewPassword)
-            {
-                ModelState.AddModelError(nameof(model.ConfirmNewPassword),
-                    "Yeni şifre ile tekrar şifreniz uyuşmuyor.");
-            }
-
+            // Profil bilgilerini (Settings sayfası için) her durumda çekeceğiz
             var settings = await _userService.GetSettingsAsync(userId);
             var profileModel = new UserSettingsViewModel
             {
@@ -179,20 +180,24 @@ public class HomeController : Controller
             };
 
             if (!ModelState.IsValid)
-            {
+            {   
                 ViewBag.PasswordModel = model;
                 return View("Settings", profileModel);
             }
 
-            var (success, errorMessage) = await _userService.ChangePasswordAsync(
-                userId,
-                model.CurrentPassword,
-                model.NewPassword
-            );
-
-            if (!success)
+            var dto = new ChangePasswordDto
             {
-                ModelState.AddModelError(string.Empty, errorMessage ?? "Şifre değiştirilemedi.");
+                UserId             = userId,
+                CurrentPassword    = model.CurrentPassword,
+                NewPassword        = model.NewPassword,
+                ConfirmNewPassword = model.ConfirmNewPassword
+            };
+
+            var result = await _userService.ChangePasswordAsync(dto);
+
+            if (!result.Succeeded)
+            {
+                AddErrorsToModelState(result);
                 ViewBag.PasswordModel = model;
                 return View("Settings", profileModel);
             }
@@ -200,4 +205,19 @@ public class HomeController : Controller
             TempData["PasswordUpdated"] = "Şifreniz başarıyla güncellendi.";
             return RedirectToAction("Settings");
         }
+
+    private void AddErrorsToModelState(ServiceResult result)
+    {
+        foreach (var error in result.Errors)
+        {
+            var key = string.IsNullOrWhiteSpace(error.Key)
+                ? string.Empty
+                : error.Key;
+
+            foreach (var message in error.Value)
+            {
+                ModelState.AddModelError(key, message);
+            }
+        }
+    }
 }
