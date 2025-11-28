@@ -27,10 +27,20 @@ public class AppUserService : IAppUserService
     
     public async Task<AppUser?> LoginAsync(string email, string password)
     {
-        // ileride password hash'e çevrildiğinde burada kontrol edeceğiz
-        return await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+        // 1) Önce kullanıcıyı email'den bul
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email);
+
+        if (user == null)
+            return null;
+
+        // 2) Şifre kontrolünü her yerde kullandığın VerifyPassword ile yap
+        if (!VerifyPassword(user.Password, password))
+            return null;
+
+        return user;
     }
+
 
     public async Task<ServiceResult> RegisterAsync(RegisterUserDto dto)
     {
