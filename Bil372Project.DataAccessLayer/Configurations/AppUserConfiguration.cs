@@ -38,5 +38,11 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 
         entity.Property(u => u.Bio)
             .HasMaxLength(500);
+        
+        // 1 User -> n UserMeasure
+        entity.HasMany(u => u.UserMeasures)
+            .WithOne(m => m.User)
+            .HasForeignKey(m => m.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

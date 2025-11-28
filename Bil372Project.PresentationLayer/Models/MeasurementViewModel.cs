@@ -17,11 +17,10 @@ public class MeasurementViewModel
     [Range(10, 400, ErrorMessage = "Kilo 10 ile 400 kg arasında olmalıdır")]
     [Display(Name = "Kilo (kg)")]
     public double WeightKg { get; set; }
-
-    public string Allergies { get; set; } = string.Empty;
-    public string Diseases { get; set; } = string.Empty;
-    public string DislikedFoods { get; set; } = string.Empty;
-
+    
+    public string ActivityLevel { get; set; } = string.Empty;      // yeni
+    public string DietaryPreference { get; set; } = string.Empty;  // yeni
+    public string Diseases { get; set; }
     public DateTime? LastUpdatedAt { get; set; }
     public string? LastUpdatedText { get; set; }
 }

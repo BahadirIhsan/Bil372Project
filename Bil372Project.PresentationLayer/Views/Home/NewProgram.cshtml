@@ -1,3 +1,4 @@
+@model Bil372Project.PresentationLayer.Models.MeasurementViewModel
 @{
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     ViewData["Title"] = "Yeni Program Al";
@@ -39,80 +40,125 @@
     </div>
 </div>
 
+@if (Model?.LastUpdatedAt != null)
+{
+    <div class="alert alert-light border-0 glass-card mb-3 small text-muted">
+        Son ölçümün: @Model.LastUpdatedAt?.ToLocalTime().ToString("g")
+    </div>
+}
+
 <div class="glass-card">
-    <form class="row g-4">
+    <form asp-action="NewProgram" asp-controller="Home" method="post" class="row g-4">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+        <!-- Hedef / temel ölçüler -->
         <div class="col-lg-4">
-            <label class="form-section-title">Hedefin</label>
+            <label class="form-section-title">Hedefin &amp; Temel Bilgiler</label>
             <div class="card border-0 shadow-sm p-3 h-100">
+
                 <div class="mb-3">
-                    <label class="form-label">Öncelik</label>
-                    <select class="form-select form-select-lg rounded-3">
-                        <option>Seçiniz</option>
-                        <option>Kilo vermek</option>
-                        <option>Kilo almak</option>
-                        <option>Form korumak</option>
-                        <option>Daha enerjik hissetmek</option>
+                    <label asp-for="Gender" class="form-label"></label>
+                    <select asp-for="Gender" class="form-select form-select-lg rounded-3">
+                        <option value="">Seçiniz</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                     </select>
+                    <span asp-validation-for="Gender" class="text-danger small"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Hedef kilo</label>
+                    <label asp-for="Age" class="form-label"></label>
+                    <input asp-for="Age" class="form-control form-control-lg rounded-3" />
+                    <span asp-validation-for="Age" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="HeightCm" class="form-label">Boy (cm)</label>
+                    <input asp-for="HeightCm" class="form-control form-control-lg rounded-3" />
+                    <span asp-validation-for="HeightCm" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="WeightKg" class="form-label">Mevcut kilo</label>
+                    <input asp-for="WeightKg" class="form-control form-control-lg rounded-3" />
+                    <span asp-validation-for="WeightKg" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-0">
+                    <label class="form-label">Hedef kilo (opsiyonel)</label>
+                    <!-- Şimdilik modele bağlı değil -->
                     <input type="number" class="form-control form-control-lg rounded-3" placeholder="Örn. 68" />
                 </div>
-                <div class="mb-0">
-                    <label class="form-label">Süre (hafta)</label>
+                <div class="mt-3">
+                    <label class="form-label">Süre (hafta) (opsiyonel)</label>
                     <input type="number" class="form-control form-control-lg rounded-3" placeholder="12" />
                 </div>
             </div>
         </div>
 
+        <!-- Beslenme Tercihleri -->
         <div class="col-lg-4">
             <label class="form-section-title">Beslenme Tercihleri</label>
             <div class="card border-0 shadow-sm p-3 h-100">
                 <div class="mb-3">
-                    <label class="form-label">Beslenme stili</label>
-                    <select class="form-select rounded-3">
-                        <option>Normal</option>
-                        <option>Vejetaryen</option>
-                        <option>Vegan</option>
-                        <option>Glütensiz</option>
+                    <label asp-for="DietaryPreference" class="form-label">Dietary Preference</label>
+                    <select asp-for="DietaryPreference" class="form-select rounded-3">
+                        <option value="Omnivore">Omnivore</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Vegan">Vegan</option>
+                        <option value="Pescatarian">Pescatarian</option>
                     </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Sevilen öğünler</label>
-                    <textarea class="form-control rounded-3" rows="3" placeholder="Örn. Çorba, balık, salata"></textarea>
-                </div>
-                <div class="mb-0">
-                    <label class="form-label">Kaçınmak istediklerin</label>
-                    <textarea class="form-control rounded-3" rows="3" placeholder="Örn. Şekerli içecekler"></textarea>
+                    <span asp-validation-for="DietaryPreference" class="text-danger small"></span>
                 </div>
             </div>
         </div>
 
+        <!-- Aktivite & Yaşam -->
         <div class="col-lg-4">
             <label class="form-section-title">Aktivite &amp; Yaşam</label>
             <div class="card border-0 shadow-sm p-3 h-100">
                 <div class="mb-3">
-                    <label class="form-label">Aktivite seviyesi</label>
-                    <select class="form-select rounded-3">
-                        <option>Hareketsiz</option>
-                        <option>Hafif aktif</option>
-                        <option>Orta aktif</option>
-                        <option>Çok aktif</option>
+                    <label asp-for="ActivityLevel" class="form-label">Aktivite seviyesi</label>
+                    <select asp-for="ActivityLevel" class="form-select rounded-3">
+                        <option value="">Seçiniz</option>
+                        <option value="Sedentary">Sedentary</option>
+                        <option value="Lightly Active">Lightly Active</option>
+                        <option value="Moderately Active">Moderately Active</option>
+                        <option value="Very Active">Very Active</option>
+                        <option value="Extremely Active">Extremely Active</option>
                     </select>
+                    <span asp-validation-for="ActivityLevel" class="text-danger small"></span>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Günlük tempo</label>
+                    <label class="form-label">Günlük tempo (opsiyonel)</label>
                     <input type="text" class="form-control rounded-3" placeholder="Örn. Masa başı, ayakta çalışma" />
                 </div>
                 <div class="mb-0">
-                    <label class="form-label">Ek notların</label>
-                    <textarea class="form-control rounded-3" rows="3" placeholder="Bizi bilgilendir..."></textarea>
+                    <label asp-for="Diseases" class="form-label">Disease</label>
+                    <select asp-for="Diseases" class="form-select rounded-3">
+                        <option value="">None</option>
+                        <option value="Hypertension">Hypertension</option>
+                        <option value="Heart Disease">Heart Disease</option>
+                        <option value="Kidney Disease">Kidney Disease</option>
+                        <option value="Acne">Acne</option>
+                        <option value="Diabetes">Diabetes</option>
+                    </select>
+                    <span asp-validation-for="Diseases" class="text-danger small"></span>
                 </div>
+
             </div>
         </div>
 
         <div class="col-12 d-flex justify-content-end">
-            <button type="button" class="btn btn-primary btn-lg px-5"><i class="bi bi-magic me-2"></i> Programı Oluştur</button>
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="bi bi-magic me-2"></i> Programı Oluştur
+            </button>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

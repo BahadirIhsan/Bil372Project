@@ -6,10 +6,9 @@ public class UserMeasureInput
     public int Age { get; set; }
     public double HeightCm { get; set; }
     public double WeightKg { get; set; }
-    public string Allergies { get; set; } = string.Empty;
-    public string Diseases { get; set; } = string.Empty;
-    public string DislikedFoods { get; set; } = string.Empty;
-    
+    public string ActivityLevel { get; set; }
+    public string DietaryPreference { get; set; }
+    public string Diseases { get; set; }
     public DateTime? LastUpdatedAt { get; set; }
 
 }

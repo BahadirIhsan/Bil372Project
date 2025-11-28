@@ -1,3 +1,4 @@
+@model Bil372Project.PresentationLayer.Models.DietHistoryViewModel
 @{
     Layout = "~/Views/Shared/_MainLayout.cshtml";
     ViewData["Title"] = "Geçmiş Bilgilerim";
@@ -6,61 +7,57 @@
 <div class="row g-4">
     <div class="col-xl-7">
         <div class="glass-card h-100">
-            <h3 class="section-title">Ölçüm Geçmişi</h3>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-card">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong>12 Mart 2024</strong>
-                            <span class="badge-soft">-0.6 kg</span>
+            <h3 class="section-title">Ölçüm & Program Geçmişi</h3>
+
+            @if (Model.Plans == null || !Model.Plans.Any())
+            {
+                <p class="text-muted">Henüz oluşturulmuş bir diyet programın bulunmuyor.</p>
+            }
+            else
+            {
+                <div class="timeline">
+                    @foreach (var p in Model.Plans.OrderByDescending(x => x.GeneratedAt))
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-card">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong>@p.GeneratedAt.ToLocalTime().ToString("g")</strong>
+                                    <span class="badge-soft">Diyet Programı</span>
+                                </div>
+                                <p class="text-muted mb-2 small">
+                                    Bu tarihte senin için oluşturulan beslenme planının özeti aşağıda.
+                                </p>
+                                <div class="row g-3 small text-muted">
+                                    <div class="col-sm-6">
+                                        <span class="fw-semibold text-dark d-block mb-1">Kahvaltı</span>
+                                        <span>@p.Breakfast</span>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <span class="fw-semibold text-dark d-block mb-1">Öğle</span>
+                                        <span>@p.Lunch</span>
+                                    </div>
+                                    <div class="col-sm-6 mt-3">
+                                        <span class="fw-semibold text-dark d-block mb-1">Akşam</span>
+                                        <span>@p.Dinner</span>
+                                    </div>
+                                    <div class="col-sm-6 mt-3">
+                                        <span class="fw-semibold text-dark d-block mb-1">Ara Öğün</span>
+                                        <span>@p.Snack</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-muted mb-2">"Akşam öğünlerimi hafifletince daha enerjik hissediyorum."</p>
-                        <div class="row g-3 small text-muted">
-                            <div class="col-sm-4">Kilo: <span class="fw-semibold text-dark">72.4 kg</span></div>
-                            <div class="col-sm-4">Bel: <span class="fw-semibold text-dark">79 cm</span></div>
-                            <div class="col-sm-4">BMI: <span class="fw-semibold text-dark">23.1</span></div>
-                        </div>
-                    </div>
+                    }
                 </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-card">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong>03 Mart 2024</strong>
-                            <span class="badge-soft">-0.4 kg</span>
-                        </div>
-                        <p class="text-muted mb-2">"Su tüketimi hedefimi tutturdum, şişkinliğim azaldı."</p>
-                        <div class="row g-3 small text-muted">
-                            <div class="col-sm-4">Kilo: <span class="fw-semibold text-dark">73.0 kg</span></div>
-                            <div class="col-sm-4">Bel: <span class="fw-semibold text-dark">80 cm</span></div>
-                            <div class="col-sm-4">BMI: <span class="fw-semibold text-dark">23.3</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-card">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <strong>18 Şubat 2024</strong>
-                            <span class="badge-soft">Yeni Hedef</span>
-                        </div>
-                        <p class="text-muted mb-2">"Haftada 4 gün 30 dakikalık yürüyüş planı ekledim."</p>
-                        <div class="row g-3 small text-muted">
-                            <div class="col-sm-4">Kilo: <span class="fw-semibold text-dark">73.4 kg</span></div>
-                            <div class="col-sm-4">Bel: <span class="fw-semibold text-dark">81 cm</span></div>
-                            <div class="col-sm-4">BMI: <span class="fw-semibold text-dark">23.4</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 
     <div class="col-xl-5">
         <div class="glass-card mb-4">
             <h4 class="section-title">Kilo Değişim Analizi</h4>
-            <p class="text-muted small">Aşağıdaki grafik son 6 haftalık kilo değişimini temsil eder. Gerçek veriler yakında eklenecek.</p>
+            <p class="text-muted small">Aşağıdaki grafik son haftalardaki ilerlemeni temsil eder. Gerçek veriler yakında eklenecek.</p>
             <div class="bg-white rounded-4 p-4 shadow-sm">
                 <div class="progress mb-3" style="height: 10px;">
                     <div class="progress-bar bg-gradient" role="progressbar" style="width: 72%; background: linear-gradient(135deg,#30d0d0,#0575e6);"></div>
@@ -79,30 +76,25 @@
                 <li class="d-flex gap-3 mb-3 align-items-start">
                     <span class="text-success"><i class="bi bi-trophy fs-4"></i></span>
                     <div>
-                        <h6 class="mb-1">Hedeflenen kilo kaybı gerçekleşti</h6>
-                        <p class="text-muted small mb-0">Son 30 günde planlanan 1 kg kaybın üzerine çıktın.</p>
+                        <h6 class="mb-1">Hedeflerine yaklaşıyorsun</h6>
+                        <p class="text-muted small mb-0">Programlarını düzenli takip ettikçe ilerleme grafiğin daha da netleşecek.</p>
                     </div>
                 </li>
                 <li class="d-flex gap-3 mb-3 align-items-start">
                     <span class="text-warning"><i class="bi bi-lightning-charge fs-4"></i></span>
                     <div>
                         <h6 class="mb-1">Aktivite serisi</h6>
-                        <p class="text-muted small mb-0">Haftalık yürüyüş hedefini 5 hafta üst üste tamamladın.</p>
+                        <p class="text-muted small mb-0">Düzenli hareket, programlarının etkisini önemli ölçüde artırır.</p>
                     </div>
                 </li>
                 <li class="d-flex gap-3 align-items-start">
                     <span class="text-info"><i class="bi bi-droplet-half fs-4"></i></span>
                     <div>
                         <h6 class="mb-1">Su hedefi</h6>
-                        <p class="text-muted small mb-0">Günde 8 bardak su hedefini %85 oranında tutturdun.</p>
+                        <p class="text-muted small mb-0">Yeterli su tüketimi, hem performansını hem de metabolizmanı destekler.</p>
                     </div>
                 </li>
             </ul>
         </div>
     </div>
 </div>
-
-
-
-
-

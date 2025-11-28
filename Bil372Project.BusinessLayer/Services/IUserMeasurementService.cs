@@ -8,7 +8,7 @@ public interface IUserMeasurementService
     Task<UserMeasureInput?> GetMeasureAsync(int userId);
 
     // Kullanıcının ölçü bilgilerini ekle/güncelle
-    Task SaveMeasureAsync(int userId, UserMeasureInput input);
+    Task<int> SaveMeasureAsync(int userId, UserMeasureInput input);   // ← int id dönecek
     
     // bu kısımda kullanıcıya özel dashboard istatistiklerini getirir
     Task<DashboardStatsDto> GetDashboardStatsAsync(int userId);

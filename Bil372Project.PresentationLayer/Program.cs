@@ -19,6 +19,9 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ChangePasswordDtoValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UserSettingsDtoValidator>();
+builder.Services.AddScoped<IModelInputService, ModelInputService>();
+builder.Services.AddScoped<IAiDietService, AiDietService>();
+builder.Services.AddScoped<IDietPlanService, DietPlanService>();
 
 
 
