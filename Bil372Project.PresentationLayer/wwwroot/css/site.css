@@ -358,6 +358,51 @@ body {
   box-shadow: 0 10px 30px rgba(15, 32, 39, 0.08);
 }
 
+.disease-selector {
+  gap: 0.75rem;
+}
+
+.disease-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 42, 67, 0.12);
+  background: rgba(248, 252, 255, 0.85);
+  box-shadow: 0 8px 18px rgba(16, 42, 67, 0.05);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.disease-pill:hover {
+  border-color: rgba(5, 117, 230, 0.45);
+  box-shadow: 0 10px 20px rgba(5, 117, 230, 0.12);
+  transform: translateY(-1px);
+}
+
+.disease-pill .form-check-input {
+  margin-top: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.disease-pill .form-check-label {
+  cursor: pointer;
+  font-weight: 600;
+  color: #20334d;
+}
+
+.disease-pill .form-check-input:checked + .form-check-label {
+  color: #0f5bb5;
+}
+
+.disease-none-pill {
+  background: rgba(255, 246, 240, 0.9);
+  border-color: rgba(255, 169, 115, 0.35);
+}
+
 @media (max-width: 767.98px) {
   .program-hero {
     padding: 1.25rem;

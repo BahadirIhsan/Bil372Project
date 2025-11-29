@@ -1,0 +1,55 @@
+@model IList<string>
+
+@{
+    var selectedDiseases = Model ?? new List<string>();
+    var diseaseOptions = new List<(string Value, string Label, bool IsNone)>
+    {
+        ("Hypertension", "Hypertension", false),
+        ("Heart Disease", "Heart Disease", false),
+        ("Kidney Disease", "Kidney Disease", false),
+        ("Acne", "Acne", false),
+        ("Diabetes", "Diabetes", false),
+        ("None", "None", true)
+    };
+}
+
+<div class="disease-selector d-flex flex-wrap gap-3" data-disease-selector>
+    @foreach (var option in diseaseOptions)
+    {
+        var isChecked = selectedDiseases.Contains(option.Value);
+        <label class="form-check disease-pill @(option.IsNone ? "disease-none-pill" : "")">
+            <input class="form-check-input disease-checkbox @(option.IsNone ? "disease-none" : "")"
+                   type="checkbox"
+                   name="SelectedDiseases"
+                   value="@option.Value"
+                   @(isChecked ? "checked" : "" ) />
+            <span class="form-check-label">@option.Label</span>
+        </label>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const selectors = document.querySelectorAll('[data-disease-selector]');
+        selectors.forEach(selector => {
+            const noneBox = selector.querySelector('.disease-none');
+            const boxes = selector.querySelectorAll('.disease-checkbox');
+
+            boxes.forEach(box => {
+                box.addEventListener('change', () => {
+                    if (box === noneBox) {
+                        if (noneBox.checked) {
+                            boxes.forEach(other => {
+                                if (other !== noneBox) {
+                                    other.checked = false;
+                                }
+                            });
+                        }
+                    } else if (box.checked && noneBox) {
+                        noneBox.checked = false;
+                    }
+                });
+            });
+        });
+    });
+</script>
