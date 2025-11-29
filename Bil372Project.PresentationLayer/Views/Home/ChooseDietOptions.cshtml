@@ -4,41 +4,145 @@
     ViewData["Title"] = "Önerilen Programdan Seç";
 }
 
+<style>
+    .diet-modal {
+        z-index: 1050;
+        position: relative;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+        border-radius: 20px;
+    }
+
+    .section-title {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .section-title .pill {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        background: linear-gradient(120deg, #4ade80, #22c55e);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+    .option-card {
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        background: linear-gradient(120deg, rgba(37, 99, 235, 0.05), rgba(59, 130, 246, 0.02));
+    }
+
+    .option-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 30px rgba(37, 99, 235, 0.12);
+        border-color: rgba(37, 99, 235, 0.18);
+    }
+
+    .option-card input[type=radio] {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #94a3b8;
+        box-shadow: none;
+    }
+
+    .option-card input[type=radio]:checked {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .option-card .probability {
+        font-size: 12px;
+        color: #0ea5e9;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(14, 165, 233, 0.12);
+        padding: 6px 12px;
+        border-radius: 999px;
+    }
+
+    .option-card .probability .dot {
+        width: 8px;
+        height: 8px;
+        background: #0ea5e9;
+        border-radius: 50%;
+    }
+
+    .headline {
+        background: linear-gradient(90deg, #2563eb, #22c55e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .badge-soft {
+        background: rgba(37, 99, 235, 0.1);
+        color: #1d4ed8;
+    }
+
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(15, 23, 42, 0.08), transparent);
+        margin: 1.5rem 0;
+    }
+</style>
+
 <div class="modal-backdrop fade show"></div>
 
-<div class="modal-dialog modal-xl modal-dialog-centered" style="z-index:1050; position:relative;">
-    <div class="modal-content glass-card p-4">
-        <div class="modal-header border-0">
-            <h4 class="modal-title fw-bold">Sana özel önerilen öğünleri seç</h4>
+<div class="modal-dialog modal-xl modal-dialog-centered diet-modal">
+    <div class="modal-content glass-card p-4 p-lg-5">
+        <div class="modal-header border-0 pb-2">
+            <div>
+                <p class="text-uppercase text-muted small fw-semibold mb-1">Önerilen Program</p>
+                <h3 class="modal-title fw-bold headline mb-2">Sana özel önerilen öğünleri seç</h3>
+                <p class="text-muted mb-0">Profilin analiz edilerek her öğün için en uygun 3 seçenek listelendi. Her bölümden bir tanesini seç ve programını oluştur.</p>
+            </div>
+            <span class="badge badge-soft rounded-pill align-self-start">AI destekli öneri</span>
         </div>
-        <div class="modal-body">
-            <p class="text-muted mb-4">
-                Fit0LL, profilini analiz ederek her öğün için en uygun 3 seçeneği sundu.
-                Aşağıdan her öğün için bir tanesini seçebilirsin. Seçimin, geçmişine kaydedilecek.
-            </p>
 
-            <form asp-action="ConfirmDietOptions" method="post">
+        <div class="divider"></div>
+
+        <div class="modal-body pt-0">
+            <form asp-action="ConfirmDietOptions" method="post" class="d-flex flex-column gap-4">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="UserMeasureId" />
 
                 <div class="row g-4">
                     <!-- BREAKFAST -->
                     <div class="col-md-6">
-                        <h5 class="section-title mb-3">Breakfast</h5>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="section-title mb-0">
+                                <span class="pill">Sabah</span> Breakfast
+                            </h5>
+                            <small class="text-muted">Güne dengeli bir başlangıç</small>
+                        </div>
                         <div class="d-flex flex-column gap-3">
                             @for (int i = 0; i < Model.BreakfastOptions.Count; i++)
                             {
                                 var opt = Model.BreakfastOptions[i];
+                                var probability = Math.Round(opt.Probability * 100, 1);
                                 <label class="card border-0 shadow-sm p-3 rounded-4 option-card">
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
                                         <input type="radio"
                                                asp-for="SelectedBreakfast"
                                                value="@opt.Label"
-                                               class="form-check-input me-3" />
-                                        <div>
+                                               class="form-check-input" />
+                                        <div class="flex-grow-1">
                                             <div class="fw-semibold">@opt.Label</div>
-                                            <div class="small text-muted">
-                                            </div>
+                                            <div class="small text-muted">Enerjini yükseltecek hafif ve besleyici bir seçenek.</div>
+                                        </div>
+                                        <div class="probability">
+                                            <span class="dot"></span>@probability%
                                         </div>
                                     </div>
                                 </label>
@@ -49,21 +153,29 @@
 
                     <!-- LUNCH -->
                     <div class="col-md-6">
-                        <h5 class="section-title mb-3">Lunch</h5>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="section-title mb-0">
+                                <span class="pill" style="background: linear-gradient(120deg, #38bdf8, #0ea5e9);">Öğlen</span> Lunch
+                            </h5>
+                            <small class="text-muted">Dengeli protein & karbonhidrat</small>
+                        </div>
                         <div class="d-flex flex-column gap-3">
                             @for (int i = 0; i < Model.LunchOptions.Count; i++)
                             {
                                 var opt = Model.LunchOptions[i];
+                                var probability = Math.Round(opt.Probability * 100, 1);
                                 <label class="card border-0 shadow-sm p-3 rounded-4 option-card">
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
                                         <input type="radio"
                                                asp-for="SelectedLunch"
                                                value="@opt.Label"
-                                               class="form-check-input me-3" />
-                                        <div>
+                                               class="form-check-input" />
+                                        <div class="flex-grow-1">
                                             <div class="fw-semibold">@opt.Label</div>
-                                            <div class="small text-muted">
-                                            </div>
+                                            <div class="small text-muted">Gün ortasında dengeli tokluk sağlayan menü.</div>
+                                        </div>
+                                        <div class="probability">
+                                            <span class="dot"></span>@probability%
                                         </div>
                                     </div>
                                 </label>
@@ -73,22 +185,30 @@
                     </div>
 
                     <!-- DINNER -->
-                    <div class="col-md-6 mt-4">
-                        <h5 class="section-title mb-3">Dinner</h5>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="section-title mb-0">
+                                <span class="pill" style="background: linear-gradient(120deg, #a78bfa, #8b5cf6);">Akşam</span> Dinner
+                            </h5>
+                            <small class="text-muted">Günün yorgunluğuna hafif kapanış</small>
+                        </div>
                         <div class="d-flex flex-column gap-3">
                             @for (int i = 0; i < Model.DinnerOptions.Count; i++)
                             {
                                 var opt = Model.DinnerOptions[i];
+                                var probability = Math.Round(opt.Probability * 100, 1);
                                 <label class="card border-0 shadow-sm p-3 rounded-4 option-card">
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
                                         <input type="radio"
                                                asp-for="SelectedDinner"
                                                value="@opt.Label"
-                                               class="form-check-input me-3" />
-                                        <div>
+                                               class="form-check-input" />
+                                        <div class="flex-grow-1">
                                             <div class="fw-semibold">@opt.Label</div>
-                                            <div class="small text-muted">
-                                            </div>
+                                            <div class="small text-muted">Sindirim dostu, dengeli akşam alternatifi.</div>
+                                        </div>
+                                        <div class="probability">
+                                            <span class="dot"></span>@probability%
                                         </div>
                                     </div>
                                 </label>
@@ -98,22 +218,30 @@
                     </div>
 
                     <!-- SNACK -->
-                    <div class="col-md-6 mt-4">
-                        <h5 class="section-title mb-3">Snack</h5>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="section-title mb-0">
+                                <span class="pill" style="background: linear-gradient(120deg, #f97316, #fb923c);">Atıştırmalık</span> Snack
+                            </h5>
+                            <small class="text-muted">Tatlı krizlerine hafif çözümler</small>
+                        </div>
                         <div class="d-flex flex-column gap-3">
                             @for (int i = 0; i < Model.SnackOptions.Count; i++)
                             {
                                 var opt = Model.SnackOptions[i];
+                                var probability = Math.Round(opt.Probability * 100, 1);
                                 <label class="card border-0 shadow-sm p-3 rounded-4 option-card">
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center gap-3">
                                         <input type="radio"
                                                asp-for="SelectedSnack"
                                                value="@opt.Label"
-                                               class="form-check-input me-3" />
-                                        <div>
+                                               class="form-check-input" />
+                                        <div class="flex-grow-1">
                                             <div class="fw-semibold">@opt.Label</div>
-                                            <div class="small text-muted">
-                                            </div>
+                                            <div class="small text-muted">Kan şekerini dengede tutan hafif alternatif.</div>
+                                        </div>
+                                        <div class="probability">
+                                            <span class="dot"></span>@probability%
                                         </div>
                                     </div>
                                 </label>
@@ -123,11 +251,11 @@
                     </div>
                 </div>
 
-                <div class="mt-4 d-flex justify-content-end gap-3">
-                    <a asp-action="NewProgram" class="btn btn-outline-secondary">
+                <div class="d-flex justify-content-end gap-3 pt-2">
+                    <a asp-action="NewProgram" class="btn btn-outline-secondary px-4">
                         Vazgeç
                     </a>
-                    <button type="submit" class="btn btn-primary px-4">
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm">
                         Seçimleri Kaydet
                     </button>
                 </div>
