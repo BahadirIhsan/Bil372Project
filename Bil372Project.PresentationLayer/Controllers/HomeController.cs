@@ -67,10 +67,10 @@ public class HomeController : Controller
         var dto = await _userMeasurementService.GetMeasureAsync(userId);
 
         var model = new MeasurementViewModel();
-        
-        if (!string.IsNullOrWhiteSpace(dto.Diseases))
+
+        if (!string.IsNullOrWhiteSpace(dto?.Diseases))
         {
-            model.SelectedDiseases = dto.Diseases
+            model.SelectedDiseases = dto!.Diseases
                 .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                 .ToList();
         }
@@ -108,7 +108,7 @@ public class HomeController : Controller
             return View(model);
 
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        
+
         var diseasesCsv = BuildDiseasesCsv(model.SelectedDiseases);
 
         var input = new UserMeasureInput
@@ -133,9 +133,11 @@ public class HomeController : Controller
         if (selected == null || selected.Count == 0)
             return null;
 
+        if (selected.Any(s => string.Equals(s, "None", StringComparison.OrdinalIgnoreCase)))
+            return "None";
+
         var cleaned = selected
-            .Where(s => !string.IsNullOrWhiteSpace(s)
-                        && !string.Equals(s, "None", StringComparison.OrdinalIgnoreCase))
+            .Where(s => !string.IsNullOrWhiteSpace(s))
             .Distinct()
             .ToList();
 
@@ -157,7 +159,7 @@ public class HomeController : Controller
         {
             SelectedDiseases = new List<string>()
         };
-        
+
         if (dto != null)
         {
             model.Gender            = dto.Gender;
@@ -168,6 +170,13 @@ public class HomeController : Controller
             model.ActivityLevel     = dto.ActivityLevel;
             model.DietaryPreference = dto.DietaryPreference;
             model.LastUpdatedAt     = dto.LastUpdatedAt;
+
+            if (!string.IsNullOrWhiteSpace(dto.Diseases))
+            {
+                model.SelectedDiseases = dto.Diseases
+                    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
         }
 
         return View(model);
@@ -182,13 +191,15 @@ public class HomeController : Controller
 
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+        var diseasesCsv = BuildDiseasesCsv(model.SelectedDiseases);
+
         var input = new UserMeasureInput
         {
             Gender            = model.Gender,
             Age               = model.Age,
             HeightCm          = model.HeightCm,
             WeightKg          = model.WeightKg,
-            Diseases          = NormalizeDiseases(model.Diseases), // buraya dikkat
+            Diseases          = diseasesCsv,
             ActivityLevel     = model.ActivityLevel,
             DietaryPreference = model.DietaryPreference
         };
@@ -232,20 +243,7 @@ public class HomeController : Controller
         return View("ChooseDietOptions", vm);
         
     }
-    private string? NormalizeDiseases(string? diseases)
-    {
-        if (string.IsNullOrWhiteSpace(diseases))
-            return null;
-
-        // "None" seçildiyse null kaydet
-        if (string.Equals(diseases, "None", StringComparison.OrdinalIgnoreCase))
-            return null;
-
-        return diseases;
-    }
-
-    
-    // confirm kısmı 3 çeşit diet listesinden 
+    // confirm kısmı 3 çeşit diet listesinden
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ConfirmDietOptions(DietOptionViewModel model)
