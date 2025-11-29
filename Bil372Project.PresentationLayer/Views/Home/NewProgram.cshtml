@@ -4,41 +4,58 @@
     ViewData["Title"] = "Yeni Program Al";
 }
 
-<div class="glass-card mb-4">
+<section class="glass-card mb-4 program-hero">
     <div class="row g-4 align-items-center">
-        <div class="col-lg-6">
-            <h2 class="fw-bold mb-3">Sana özel bir plan oluşturalım</h2>
-            <p class="text-muted">Fit0LL, hedeflerin, tercihlerin ve sağlık bilgilerin doğrultusunda en iyi programı tasarlar. Aşağıdaki formu doldur, birkaç dakika içinde önerileri keşfet.</p>
-            <div class="d-flex flex-wrap gap-3 mt-4">
-                <div class="program-step flex-grow-1 mb-0">
+        <div class="col-lg-7">
+            <span class="program-badge">Yeni Program</span>
+            <h1 class="program-title mt-3">Sana özel bir plan oluşturalım</h1>
+            <p class="program-lead">Fit0LL, hedeflerin, tercihlerin ve sağlık bilgilerin doğrultusunda en iyi programı tasarlar. Aşağıdaki formu doldur, birkaç dakika içinde önerileri keşfet.</p>
+
+            <div class="program-steps mt-4">
+                <div class="program-step">
                     <div class="step-index">1</div>
                     <div>
                         <h6>Tercihlerini paylaş</h6>
                         <p class="text-muted small mb-0">Beslenme düzeni, sevdiğin ve kaçındığın yiyecekler.</p>
                     </div>
                 </div>
-                <div class="program-step flex-grow-1 mb-0">
+                <div class="program-step">
                     <div class="step-index">2</div>
                     <div>
                         <h6>Hedefini belirt</h6>
                         <p class="text-muted small mb-0">Kilo verme, kas kazanma ya da daha zinde hissetme.</p>
                     </div>
                 </div>
+                <div class="program-step">
+                    <div class="step-index">3</div>
+                    <div>
+                        <h6>Önerileri incele</h6>
+                        <p class="text-muted small mb-0">Egzersiz ve beslenme planını görüntüle, istediğinde güncelle.</p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-lg-6">
-            <div class="bg-white rounded-4 shadow-sm p-4 card-glow">
-                <h5 class="fw-semibold mb-3">Hazır mısın?</h5>
+        <div class="col-lg-5">
+            <div class="bg-white rounded-4 shadow-sm p-4 card-glow program-cta">
+                <h5 class="fw-semibold mb-2">Hazır mısın?</h5>
                 <p class="text-muted mb-4">Formu tamamla, uzmanlarımızın önerdiği egzersiz ve beslenme planını dakikalar içinde al.</p>
                 <ul class="list-unstyled small text-muted mb-0">
                     <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Kişisel hedeflerine göre hazırlanır.</li>
                     <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Uzman diyetisyen ve antrenör onaylıdır.</li>
                     <li><i class="bi bi-check-circle text-success me-2"></i> Haftalık hatırlatmalarla seni motive eder.</li>
                 </ul>
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+                    <div class="d-flex align-items-center gap-2 text-success small fw-semibold">
+                        <i class="bi bi-shield-check"></i> Verilerin güvenle korunur
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-primary small fw-semibold">
+                        <i class="bi bi-bell"></i> Haftalık ilerleme bildirimi
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 @if (Model?.LastUpdatedAt != null)
 {
@@ -47,7 +64,18 @@
     </div>
 }
 
-<div class="glass-card">
+<section class="glass-card program-form">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+        <div>
+            <h2 class="h4 fw-semibold mb-1">Bilgilerini paylaş</h2>
+            <p class="text-muted mb-0">Hedeflerin, alışkanlıkların ve sağlık verilerinle sana en uygun programı oluşturalım.</p>
+        </div>
+        <div class="program-meta text-muted small d-flex align-items-center gap-2">
+            <i class="bi bi-clock-history text-primary"></i>
+            Ortalama doldurma süresi: 2-3 dakika
+        </div>
+    </div>
+
     <form asp-action="NewProgram" asp-controller="Home" method="post" class="row g-4">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
@@ -151,13 +179,19 @@
             </div>
         </div>
 
-        <div class="col-12 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-lg px-5">
-                <i class="bi bi-magic me-2"></i> Programı Oluştur
-            </button>
+        <div class="col-12">
+            <div class="program-action-bar d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <div class="fw-semibold text-dark">Programın oluşturulmaya hazır</div>
+                    <div class="text-muted small">Formu tamamladıktan sonra program önerilerini hemen görebilirsin.</div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-magic me-2"></i> Programı Oluştur
+                </button>
+            </div>
         </div>
     </form>
-</div>
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
