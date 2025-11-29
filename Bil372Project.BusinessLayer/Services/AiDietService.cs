@@ -15,18 +15,17 @@ public class AiDietService : IAiDietService
     public async Task<(string Breakfast, string Lunch, string Dinner, string Snack)>
         GenerateDietAsync(ModelInput input)
     {
-        // Disease null ya da boşsa Python'a "None" gönder
-        var disease = string.IsNullOrWhiteSpace(input.Disease) ? "None" : input.Disease;
+        // 🔹 DB’deki value -> AI için final string
+        var diseaseText = BuildDiseaseTextForAi(input.Diseases);
 
-        // ModelInput.Sodium gram; Python mg bekliyor → çevir
-        double sodiumMg = input.Sodium * 1000.0;
+        double sodiumMg = input.Sodium * 1000.0; // gram -> mg
 
         var profile = new AiUserProfileRequest
         {
             Gender             = input.Gender,
             ActivityLevel      = input.ActivityLevel,
             DietaryPreference  = input.DietaryPreference,
-            Disease            = disease,
+            Disease            = diseaseText,
             Age                = input.Ages,
             Height             = input.Height,
             Weight             = input.Weight,
@@ -44,6 +43,7 @@ public class AiDietService : IAiDietService
 
         return (breakfast, lunch, dinner, snack);
     }
+
 
     private async Task<string> CallMealAsync(string mealType, AiUserProfileRequest profile)
     {
@@ -65,37 +65,40 @@ public class AiDietService : IAiDietService
     }
     
     public async Task<DietOptionsDto> GetDietOptionsAsync(ModelInput input, int userMeasureId)
-{
-    var disease = string.IsNullOrWhiteSpace(input.Disease) ? "None" : input.Disease;
-    double sodiumMg = input.Sodium * 1000.0; // gram -> mg
-
-    var profile = new AiUserProfileRequest
     {
-        Gender             = input.Gender,
-        ActivityLevel      = input.ActivityLevel,
-        DietaryPreference  = input.DietaryPreference,
-        Disease            = disease,
-        Age                = input.Ages,
-        Height             = input.Height,
-        Weight             = input.Weight,
-        DailyCalorieTarget = input.DailyCalorieTarget,
-        Protein            = input.Protein,
-        Fat                = input.Fat,
-        Sugar              = input.Sugar,
-        SodiumMg           = sodiumMg
-    };
+        // Aynı helper
+        var diseaseText = BuildDiseaseTextForAi(input.Diseases);
 
-    var dto = new DietOptionsDto
-    {
-        UserMeasureId = userMeasureId,
-        BreakfastOptions = await CallMealOptionsAsync("breakfast", profile),
-        LunchOptions     = await CallMealOptionsAsync("lunch", profile),
-        DinnerOptions    = await CallMealOptionsAsync("dinner", profile),
-        SnackOptions     = await CallMealOptionsAsync("snack", profile)
-    };
+        double sodiumMg = input.Sodium * 1000.0; // gram -> mg
 
-    return dto;
-}
+        var profile = new AiUserProfileRequest
+        {
+            Gender             = input.Gender,
+            ActivityLevel      = input.ActivityLevel,
+            DietaryPreference  = input.DietaryPreference,
+            Disease            = diseaseText,
+            Age                = input.Ages,
+            Height             = input.Height,
+            Weight             = input.Weight,
+            DailyCalorieTarget = input.DailyCalorieTarget,
+            Protein            = input.Protein,
+            Fat                = input.Fat,
+            Sugar              = input.Sugar,
+            SodiumMg           = sodiumMg
+        };
+
+        var dto = new DietOptionsDto
+        {
+            UserMeasureId    = userMeasureId,
+            BreakfastOptions = await CallMealOptionsAsync("breakfast", profile),
+            LunchOptions     = await CallMealOptionsAsync("lunch", profile),
+            DinnerOptions    = await CallMealOptionsAsync("dinner", profile),
+            SnackOptions     = await CallMealOptionsAsync("snack", profile)
+        };
+
+        return dto;
+    }
+
 
     private async Task<List<MealOptionDto>> CallMealOptionsAsync(
         string mealType,
@@ -121,5 +124,26 @@ public class AiDietService : IAiDietService
             })
             .ToList();
     }
+    
+    private string BuildDiseaseTextForAi(string? rawDiseases)
+    {
+        // Hep Weight Gain var
+        var baseText = "Weight Gain";
+
+        if (string.IsNullOrWhiteSpace(rawDiseases))
+            return baseText;
+
+        var extras = rawDiseases
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(d => !string.IsNullOrWhiteSpace(d) &&
+                        !string.Equals(d, "None", StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (extras.Count == 0)
+            return baseText;
+
+        return baseText + ", " + string.Join(", ", extras);
+    }
+
 
 }

@@ -20,7 +20,9 @@ public class MeasurementViewModel
     
     public string ActivityLevel { get; set; } = string.Empty;      // yeni
     public string DietaryPreference { get; set; } = string.Empty;  // yeni
-    public string Diseases { get; set; }
+    public List<string> SelectedDiseases { get; set; } = new();
+
+    public string? Diseases { get; set; }
     public DateTime? LastUpdatedAt { get; set; }
     public string? LastUpdatedText { get; set; }
 }

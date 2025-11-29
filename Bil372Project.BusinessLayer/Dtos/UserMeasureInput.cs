@@ -8,7 +8,7 @@ public class UserMeasureInput
     public double WeightKg { get; set; }
     public string ActivityLevel { get; set; }
     public string DietaryPreference { get; set; }
-    public string Diseases { get; set; }
+    public string? Diseases { get; set; }
     public DateTime? LastUpdatedAt { get; set; }
 
 }

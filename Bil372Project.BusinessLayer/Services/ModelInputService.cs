@@ -15,7 +15,6 @@ public class ModelInputService : IModelInputService
 
     public async Task<ModelInput?> BuildModelInputAsync(int userMeasureId)
     {
-        // Ölçüm + ML hesaplarını birlikte çek
         var measure = await _context.UserMeasures
             .Include(m => m.MeasurementForMl)
             .FirstOrDefaultAsync(m => m.Id == userMeasureId);
@@ -25,19 +24,24 @@ public class ModelInputService : IModelInputService
 
         return new ModelInput
         {
-            Gender = measure.Gender,
-            ActivityLevel = measure.ActivityLevel,
+            Gender            = measure.Gender,
+            ActivityLevel     = measure.ActivityLevel,
             DietaryPreference = measure.DietaryPreference,
-            Disease = measure.Diseases,
-            Ages = measure.Age,
-            Height = measure.HeightCm,
-            Weight = measure.WeightKg,
+
+            // 🔹 DB’de ne yazıyorsa aynen
+            Diseases          = measure.Diseases,
+
+            Ages              = measure.Age,
+            Height            = measure.HeightCm,
+            Weight            = measure.WeightKg,
 
             DailyCalorieTarget = measure.MeasurementForMl.DailyCalorieTarget,
-            Protein = measure.MeasurementForMl.ProteinGrams,
-            Fat = measure.MeasurementForMl.FatGrams,
-            Sugar = measure.MeasurementForMl.SugarGrams,
-            Sodium = measure.MeasurementForMl.SodiumMg / 100.0, // mg to g
+            Protein            = measure.MeasurementForMl.ProteinGrams,
+            Fat                = measure.MeasurementForMl.FatGrams,
+            Sugar              = measure.MeasurementForMl.SugarGrams,
+
+            // mg → g: 1000’e bölmen gerekiyor (100 değil!)
+            Sodium             = measure.MeasurementForMl.SodiumMg / 1000.0
         };
     }
 }

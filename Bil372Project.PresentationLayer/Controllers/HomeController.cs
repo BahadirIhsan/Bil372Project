@@ -155,7 +155,7 @@ public class HomeController : Controller
             Age               = model.Age,
             HeightCm          = model.HeightCm,
             WeightKg          = model.WeightKg,
-            Diseases          = model.Diseases,
+            Diseases          = NormalizeDiseases(model.Diseases), // buraya dikkat
             ActivityLevel     = model.ActivityLevel,
             DietaryPreference = model.DietaryPreference
         };
@@ -197,7 +197,20 @@ public class HomeController : Controller
 
         // 3) Pop-up görünümüne geç (tasarımı modal gibi yapacağız)
         return View("ChooseDietOptions", vm);
+        
     }
+    private string? NormalizeDiseases(string? diseases)
+    {
+        if (string.IsNullOrWhiteSpace(diseases))
+            return null;
+
+        // "None" seçildiyse null kaydet
+        if (string.Equals(diseases, "None", StringComparison.OrdinalIgnoreCase))
+            return null;
+
+        return diseases;
+    }
+
     
     // confirm kısmı 3 çeşit diet listesinden 
     [HttpPost]

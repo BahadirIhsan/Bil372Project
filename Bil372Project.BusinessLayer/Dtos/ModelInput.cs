@@ -5,7 +5,7 @@ public class ModelInput
     public string Gender { get; set; } = "";
     public string ActivityLevel { get; set; } = "";
     public string DietaryPreference { get; set; } = "";
-    public string Disease { get; set; } = "";  
+    public string Diseases { get; set; } = "";  
     public int Ages { get; set; }
     public double Height { get; set; }
     public double Weight { get; set; }
