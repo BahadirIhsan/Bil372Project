@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Bil372Project.BusinessLayer.Dtos;
 
 namespace Bil372Project.BusinessLayer.Services;
@@ -104,6 +105,12 @@ public class AiDietService : IAiDietService
         string mealType,
         AiUserProfileRequest profile)
     {
+        // Log (geliştirme ortamı için)
+        Console.WriteLine("====== AI REQUEST ======");
+        Console.WriteLine($"Meal: {mealType}");
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(profile, new JsonSerializerOptions { WriteIndented = true }));
+        Console.WriteLine("========================");
+        
         var response = await _httpClient.PostAsJsonAsync($"/predict/{mealType}", profile);
 
         if (!response.IsSuccessStatusCode)
@@ -123,6 +130,7 @@ public class AiDietService : IAiDietService
                 Probability = t.Prob
             })
             .ToList();
+        
     }
     
     private string BuildDiseaseTextForAi(string? rawDiseases)
