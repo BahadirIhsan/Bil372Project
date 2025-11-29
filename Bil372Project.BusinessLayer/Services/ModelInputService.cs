@@ -37,7 +37,7 @@ public class ModelInputService : IModelInputService
             Protein = measure.MeasurementForMl.ProteinGrams,
             Fat = measure.MeasurementForMl.FatGrams,
             Sugar = measure.MeasurementForMl.SugarGrams,
-            Sodium = measure.MeasurementForMl.SodiumMg / 1000.0, // mg to g
+            Sodium = measure.MeasurementForMl.SodiumMg / 100.0, // mg to g
         };
     }
 }
