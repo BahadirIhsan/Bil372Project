@@ -163,17 +163,66 @@
                     <label class="form-label">Günlük tempo (opsiyonel)</label>
                     <input type="text" class="form-control rounded-3" placeholder="Örn. Masa başı, ayakta çalışma" />
                 </div>
-                <div class="mb-0">
-                    <label asp-for="Diseases" class="form-label">Disease</label>
-                    <select asp-for="Diseases" class="form-select rounded-3">
-                        <option value="">None</option>
-                        <option value="Hypertension">Hypertension</option>
-                        <option value="Heart Disease">Heart Disease</option>
-                        <option value="Kidney Disease">Kidney Disease</option>
-                        <option value="Acne">Acne</option>
-                        <option value="Diabetes">Diabetes</option>
-                    </select>
-                    <span asp-validation-for="Diseases" class="text-danger small"></span>
+                <div class="mb-3">
+                    <label class="form-label">Diseases</label>
+
+                    <div class="d-flex flex-wrap gap-3">
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="Hypertension"
+                                   @(Model.SelectedDiseases.Contains("Hypertension") ? "checked" : "") />
+                            <label class="form-check-label">Hypertension</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="Heart Disease"
+                                   @(Model.SelectedDiseases.Contains("Heart Disease") ? "checked" : "") />
+                            <label class="form-check-label">Heart Disease</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="Kidney Disease"
+                                   @(Model.SelectedDiseases.Contains("Kidney Disease") ? "checked" : "") />
+                            <label class="form-check-label">Kidney Disease</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="Acne"
+                                   @(Model.SelectedDiseases.Contains("Acne") ? "checked" : "") />
+                            <label class="form-check-label">Acne</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="Diabetes"
+                                   @(Model.SelectedDiseases.Contains("Diabetes") ? "checked" : "") />
+                            <label class="form-check-label">Diabetes</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input disease-checkbox disease-none"
+                                   type="checkbox"
+                                   name="SelectedDiseases"
+                                   value="None"
+                                   @(Model.SelectedDiseases.Contains("None") ? "checked" : "") />
+                            <label class="form-check-label">None</label>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>

@@ -67,6 +67,17 @@ public class HomeController : Controller
         var dto = await _userMeasurementService.GetMeasureAsync(userId);
 
         var model = new MeasurementViewModel();
+        
+        if (!string.IsNullOrWhiteSpace(dto.Diseases))
+        {
+            model.SelectedDiseases = dto.Diseases
+                .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
+        }
+        else
+        {
+            model.SelectedDiseases = new List<string>();
+        }
 
         if (dto != null)
         {
@@ -97,6 +108,8 @@ public class HomeController : Controller
             return View(model);
 
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        
+        var diseasesCsv = BuildDiseasesCsv(model.SelectedDiseases);
 
         var input = new UserMeasureInput
         {
@@ -104,7 +117,7 @@ public class HomeController : Controller
             Age               = model.Age,
             HeightCm          = model.HeightCm,
             WeightKg          = model.WeightKg,
-            Diseases          = model.Diseases,
+            Diseases          = diseasesCsv,
             ActivityLevel     = model.ActivityLevel,
             DietaryPreference = model.DietaryPreference
         };
@@ -115,6 +128,23 @@ public class HomeController : Controller
         
         return RedirectToAction("Values");
     }
+    private string? BuildDiseasesCsv(List<string>? selected)
+    {
+        if (selected == null || selected.Count == 0)
+            return null;
+
+        var cleaned = selected
+            .Where(s => !string.IsNullOrWhiteSpace(s)
+                        && !string.Equals(s, "None", StringComparison.OrdinalIgnoreCase))
+            .Distinct()
+            .ToList();
+
+        if (cleaned.Count == 0)
+            return null;
+
+        return string.Join(", ", cleaned);
+    }
+
 
     // Yeni Program – GET: formu son ölçümle doldur
     [HttpGet]
@@ -123,8 +153,11 @@ public class HomeController : Controller
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         var dto = await _userMeasurementService.GetMeasureAsync(userId);
-        var model = new MeasurementViewModel();
-
+        var model = new MeasurementViewModel
+        {
+            SelectedDiseases = new List<string>()
+        };
+        
         if (dto != null)
         {
             model.Gender            = dto.Gender;
