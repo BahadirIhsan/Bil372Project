@@ -1,3 +1,4 @@
+using Bil372Project.BusinessLayer.Dtos;
 using Bil372Project.DataAccessLayer;
 using Bil372Project.EntityLayer.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -20,32 +21,35 @@ public class DietPlanService : IDietPlanService
         _aiDietService = aiDietService;
     }
 
-    public async Task<UserDietPlan> CreateDietPlanAsync(int userMeasureId)
+    public async Task<DietOptionsDto> GetDietOptionsForMeasureAsync(int userMeasureId)
     {
-        // 1) ML input oluştur
         var input = await _modelInputService.BuildModelInputAsync(userMeasureId);
-
         if (input == null)
             throw new Exception("Ölçüm veya ML verileri bulunamadı.");
 
-        // 2) AI modeli çağır
-        var aiResult = await _aiDietService.GenerateDietAsync(input);
+        return await _aiDietService.GetDietOptionsAsync(input, userMeasureId);
+    }
 
-        // 3) DietPlan kaydı oluştur
+    public async Task<UserDietPlan> CreateDietPlanFromChoicesAsync(
+        int userMeasureId,
+        string breakfast,
+        string lunch,
+        string dinner,
+        string snack)
+    {
         var plan = new UserDietPlan
         {
             UserMeasureId = userMeasureId,
-            Breakfast = aiResult.Breakfast,
-            Lunch = aiResult.Lunch,
-            Dinner = aiResult.Dinner,
-            Snack = aiResult.Snack,
-            GeneratedAt = DateTime.UtcNow,
-            ModelVersion = "v1"
+            Breakfast     = breakfast,
+            Lunch         = lunch,
+            Dinner        = dinner,
+            Snack         = snack,
+            GeneratedAt   = DateTime.UtcNow,
+            ModelVersion  = "rf_v1"
         };
 
         _context.UserDietPlans.Add(plan);
         await _context.SaveChangesAsync();
-
         return plan;
     }
 

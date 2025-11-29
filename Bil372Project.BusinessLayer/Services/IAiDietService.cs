@@ -7,4 +7,6 @@ public interface IAiDietService
 {
     Task<(string Breakfast, string Lunch, string Dinner, string Snack)> 
         GenerateDietAsync(ModelInput input);
+    Task<DietOptionsDto> GetDietOptionsAsync(ModelInput input, int userMeasureId);
+
 }

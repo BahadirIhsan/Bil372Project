@@ -127,7 +127,6 @@ public class HomeController : Controller
         return View(model);
     }
 
-    // Yeni Program – POST: ölçüm kaydet + diyet oluştur
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> NewProgram(MeasurementViewModel model)
@@ -148,17 +147,71 @@ public class HomeController : Controller
             DietaryPreference = model.DietaryPreference
         };
 
-        // 1) Ölçümü kaydet ve ölçüm Id'sini al
+        // 1) Ölçümü kaydet → Id'yi al
         int userMeasureId = await _userMeasurementService.SaveMeasureAsync(userId, input);
 
-        // 2) Bu ölçüme göre diyet oluştur
-        await _dietPlanService.CreateDietPlanAsync(userMeasureId);
+        // 2) Bu ölçüm için AI'dan top3 seçenekleri al
+        var optionsDto = await _dietPlanService.GetDietOptionsForMeasureAsync(userMeasureId);
+
+        var vm = new DietOptionViewModel
+        {
+            UserMeasureId    = optionsDto.UserMeasureId,
+            BreakfastOptions = optionsDto.BreakfastOptions
+                .Select(o => new SingleMealOptionViewModel
+                {
+                    Label = o.Label,
+                    Probability = o.Probability
+                }).ToList(),
+            LunchOptions = optionsDto.LunchOptions
+                .Select(o => new SingleMealOptionViewModel
+                {
+                    Label = o.Label,
+                    Probability = o.Probability
+                }).ToList(),
+            DinnerOptions = optionsDto.DinnerOptions
+                .Select(o => new SingleMealOptionViewModel
+                {
+                    Label = o.Label,
+                    Probability = o.Probability
+                }).ToList(),
+            SnackOptions = optionsDto.SnackOptions
+                .Select(o => new SingleMealOptionViewModel
+                {
+                    Label = o.Label,
+                    Probability = o.Probability
+                }).ToList()
+        };
+
+        // 3) Pop-up görünümüne geç (tasarımı modal gibi yapacağız)
+        return View("ChooseDietOptions", vm);
+    }
+    
+    // confirm kısmı 3 çeşit diet listesinden 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmDietOptions(DietOptionViewModel model)
+    {
+        if (string.IsNullOrWhiteSpace(model.SelectedBreakfast) ||
+            string.IsNullOrWhiteSpace(model.SelectedLunch) ||
+            string.IsNullOrWhiteSpace(model.SelectedDinner) ||
+            string.IsNullOrWhiteSpace(model.SelectedSnack))
+        {
+            ModelState.AddModelError(string.Empty, "Lütfen her öğün için bir seçenek seçin.");
+            return View("ChooseDietOptions", model);
+        }
+
+        await _dietPlanService.CreateDietPlanFromChoicesAsync(
+            model.UserMeasureId,
+            model.SelectedBreakfast,
+            model.SelectedLunch,
+            model.SelectedDinner,
+            model.SelectedSnack);
 
         TempData["ProgramCreated"] = "Yeni programınız oluşturuldu.";
-
-        // İster History'e, ister özel bir “Son Program” sayfasına atabiliriz
         return RedirectToAction("History");
     }
+
+
 
     // Geçmiş programlar
     [HttpGet]

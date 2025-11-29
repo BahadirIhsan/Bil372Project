@@ -10,7 +10,16 @@ using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var aiBaseUrl = builder.Configuration["AiService:BaseUrl"];
+
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 // FluentValidation entegrasyonu
 builder.Services.AddFluentValidationAutoValidation();
@@ -23,14 +32,11 @@ builder.Services.AddScoped<IModelInputService, ModelInputService>();
 builder.Services.AddScoped<IAiDietService, AiDietService>();
 builder.Services.AddScoped<IDietPlanService, DietPlanService>();
 
-
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddHttpClient<IAiDietService, AiDietService>(client =>
 {
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    client.BaseAddress = new Uri(aiBaseUrl!);
 });
+
 // authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
