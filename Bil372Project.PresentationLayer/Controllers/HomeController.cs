@@ -33,13 +33,26 @@ public class HomeController : Controller
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
         var stats = await _userMeasurementService.GetDashboardStatsAsync(userId);
+        
+        var plans = await _dietPlanService.GetUserPlansAsync(userId);
+        var latestPlan = plans.FirstOrDefault();
 
         var model = new DashboardViewModel
         {
             CurrentWeightKg         = stats.CurrentWeightKg,
             CurrentBmi              = stats.CurrentBmi,          // şimdilik null olabilir
             WeightChangeLastMonthKg = stats.WeightChangeLastMonthKg,
-            BmiCategory             = stats.BmiCategory
+            BmiCategory             = stats.BmiCategory,
+            TodayPlan = latestPlan == null
+                ? null
+                : new TodayDietPlanViewModel
+                {
+                    Breakfast   = latestPlan.Breakfast,
+                    Lunch       = latestPlan.Lunch,
+                    Dinner      = latestPlan.Dinner,
+                    Snack       = latestPlan.Snack,
+                    GeneratedAt = latestPlan.GeneratedAt
+                }
         };
 
         return View(model);
