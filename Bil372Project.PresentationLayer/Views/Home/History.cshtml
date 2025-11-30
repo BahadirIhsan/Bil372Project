@@ -15,15 +15,32 @@
             }
             else
             {
+                if (TempData["PlanDeleted"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        @TempData["PlanDeleted"]
+                    </div>
+                }
+                
                 <div class="timeline">
-                    @foreach (var p in Model.Plans.OrderByDescending(x => x.GeneratedAt))
+                    @foreach (var p in Model.Plans)
                     {
                         <div class="timeline-item">
                             <div class="timeline-dot"></div>
                             <div class="timeline-card">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <strong>@p.GeneratedAt.ToLocalTime().ToString("g")</strong>
-                                    <span class="badge-soft">Diyet Programı</span>
+                                    <div class="d-flex gap-2">
+                                        <span class="badge-soft">Diyet Programı</span>
+                                        <form asp-action="DeletePlan" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@p.Id" />
+                                            <input type="hidden" name="page" value="@Model.CurrentPage" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bu planı silmek istediğine emin misin?');">
+                                                <i class="bi bi-trash"></i> Sil
+                                            </button>
+                                        </form>
+                                    </div>                                
                                 </div>
                                 <p class="text-muted mb-2 small">
                                     Bu tarihte senin için oluşturulan beslenme planının özeti aşağıda.
@@ -50,6 +67,23 @@
                         </div>
                     }
                 </div>
+                
+                @if (Model.TotalPages > 1)
+                {
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted small">
+                            Sayfa @Model.CurrentPage / @Model.TotalPages
+                        </div>
+                        <div class="btn-group" role="group">
+                            <a class="btn btn-outline-secondary @(Model.CurrentPage <= 1 ? "disabled" : string.Empty)" asp-action="History" asp-route-page="@(Model.CurrentPage - 1)">
+                                Önceki
+                            </a>
+                            <a class="btn btn-outline-primary @(Model.CurrentPage >= Model.TotalPages ? "disabled" : string.Empty)" asp-action="History" asp-route-page="@(Model.CurrentPage + 1)">
+                                Sonraki
+                            </a>
+                        </div>
+                    </div>
+                }
             }
         </div>
     </div>

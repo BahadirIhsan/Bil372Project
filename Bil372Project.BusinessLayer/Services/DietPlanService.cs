@@ -82,4 +82,30 @@ public class DietPlanService : IDietPlanService
             .OrderByDescending(p => p.GeneratedAt)
             .ToListAsync();
     }
+    
+    public async Task<bool> DeleteUserPlanAsync(int userId, int planId)
+    {
+        var plan = await _context.UserDietPlans
+            .Include(p => p.UserMeasure)
+            .FirstOrDefaultAsync(p => p.Id == planId && p.UserMeasure.UserId == userId);
+
+        if (plan == null)
+            return false;
+
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+
+        _context.UserDietPlans.Remove(plan);
+        await _context.SaveChangesAsync();
+
+        await _auditLogService.LogAsync(userId, "UserDietPlans", "Delete", new
+        {
+            plan.Id,
+            plan.UserMeasureId,
+            plan.GeneratedAt,
+            plan.ModelVersion
+        }, null);
+
+        await transaction.CommitAsync();
+        return true;
+    }
 }

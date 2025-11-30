@@ -361,23 +361,42 @@ public class HomeController : Controller
 
     // Geçmiş programlar
     [HttpGet]
-    public async Task<IActionResult> History()
+    public async Task<IActionResult> History(int page = 1)
     {
         int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        
+        const int pageSize = 5;
 
         var plans = await _dietPlanService.GetUserPlansAsync(userId);
+        var orderedPlans = plans.OrderByDescending(x => x.GeneratedAt).ToList();
 
+        var totalPlans = orderedPlans.Count;
+        var totalPages = totalPlans == 0
+            ? 1
+            : (int)Math.Ceiling(totalPlans / (double)pageSize);
+
+        page = Math.Clamp(page, 1, totalPages);
+
+        var pagedPlans = orderedPlans
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(p => new DietPlanViewModel
+            {
+                Id          = p.Id,
+                Breakfast   = p.Breakfast,
+                Lunch       = p.Lunch,
+                Dinner      = p.Dinner,
+                Snack       = p.Snack,
+                GeneratedAt = p.GeneratedAt
+            }).ToList();
+        
         var model = new DietHistoryViewModel
         {
-            Plans = plans.Select(p => new DietPlanViewModel
-            {
-                Id         = p.Id,
-                GeneratedAt = p.GeneratedAt,
-                Breakfast  = p.Breakfast,
-                Lunch      = p.Lunch,
-                Dinner     = p.Dinner,
-                Snack      = p.Snack
-            }).ToList()
+            Plans       = pagedPlans,
+            CurrentPage = totalPlans == 0 ? 0 : page,
+            TotalPages  = totalPlans == 0 ? 0 : totalPages,
+            PageSize    = pageSize,
+            TotalPlans  = totalPlans
         };
 
         return View(model);
@@ -405,6 +424,22 @@ public class HomeController : Controller
 
         ViewBag.PasswordModel = new ChangePasswordViewModel();
         return View(model);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePlan(int id, int page = 1)
+    {
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var deleted = await _dietPlanService.DeleteUserPlanAsync(userId, id);
+
+        if (!deleted)
+            return NotFound();
+
+        TempData["PlanDeleted"] = "Plan listeden kaldırıldı.";
+
+        return RedirectToAction("History", new { page });
     }
 
     [HttpPost]

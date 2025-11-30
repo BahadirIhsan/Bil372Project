@@ -15,5 +15,7 @@ public interface IDietPlanService
         string snack);
 
     Task<IList<UserDietPlan>> GetUserPlansAsync(int userId);
+    Task<bool> DeleteUserPlanAsync(int userId, int planId);
+
 }
 
