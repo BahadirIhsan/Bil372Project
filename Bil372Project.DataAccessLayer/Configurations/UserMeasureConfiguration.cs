@@ -32,12 +32,5 @@ public class UserMeasureConfiguration : IEntityTypeConfiguration<UserMeasure>
 
         entity.Property(m => m.UpdatedAt)
             .IsRequired();
-
-        // User ilişki (1 User - 1 Measure)
-        /*entity.HasOne(m => m.User)
-            .WithMany()                 // 1 kullanıcının çok ölçümü
-            .HasForeignKey(m => m.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-        */
     }
 }

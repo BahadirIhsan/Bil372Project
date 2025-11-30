@@ -1,3 +1,4 @@
+using System.Text;
 using Bil372Project.BusinessLayer.Services;
 using Bil372Project.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
@@ -5,8 +6,15 @@ using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Bil372Project.BusinessLayer.FluentValidation;
 using Bil372Project.BusinessLayer.Dtos;
+using Bil372Project.BusinessLayer.Dtos.Jwt;
+using Bil372Project.BusinessLayer.Services.Jwt;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +40,15 @@ builder.Services.AddScoped<IModelInputService, ModelInputService>();
 builder.Services.AddScoped<IAiDietService, AiDietService>();
 builder.Services.AddScoped<IDietPlanService, DietPlanService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IUserSessionService, UserSessionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddHttpClient<IAiDietService, AiDietService>(client =>
 {
     client.BaseAddress = new Uri(aiBaseUrl!);
 });
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 
 // authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -47,6 +59,23 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Account/Logout";   // istersen kullanırsın
         options.AccessDeniedPath = "/Account/Login";
         options.SlidingExpiration = true;
+        
+    })
+    .AddJwtBearer(options =>
+    {
+        var jwtSection = builder.Configuration.GetSection("Jwt");
+        var secretKey = jwtSection.GetValue<string>("SecretKey") ?? string.Empty;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSection.GetValue<string>("Issuer"),
+            ValidAudience = jwtSection.GetValue<string>("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
     });
 
 
