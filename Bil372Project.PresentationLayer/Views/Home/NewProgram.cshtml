@@ -113,14 +113,9 @@
                     <span asp-validation-for="WeightKg" class="text-danger small"></span>
                 </div>
 
-                <div class="mb-0">
-                    <label class="form-label">Hedef kilo (opsiyonel)</label>
-                    <!-- Şimdilik modele bağlı değil -->
-                    <input type="number" class="form-control form-control-lg rounded-3" placeholder="Örn. 68" />
-                </div>
-                <div class="mt-3">
-                    <label class="form-label">Süre (hafta) (opsiyonel)</label>
-                    <input type="number" class="form-control form-control-lg rounded-3" placeholder="12" />
+                <div class="alert alert-info mt-3 mb-0">
+                    Hedef kilo ve süre bilgilerini artık <a asp-action="Goals" class="fw-semibold">Hedef</a> sayfasından
+                    kaydedebilirsin. Buradan yalnızca ölçümlerini paylaşman yeterli.
                 </div>
             </div>
         </div>

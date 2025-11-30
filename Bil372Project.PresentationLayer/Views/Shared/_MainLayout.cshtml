@@ -30,6 +30,10 @@
                asp-controller="Home" asp-action="Index">
                 <i class="bi bi-speedometer2"></i> Gösterge Paneli
             </a>
+            <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "Goals") ? "active" : string.Empty)"
+               asp-controller="Home" asp-action="Goals">
+                <i class="bi bi-bullseye"></i> Hedef
+            </a>
             <a class="nav-link @((ViewContext.RouteData.Values["action"]?.ToString() == "Values") ? "active" : string.Empty)"
                asp-controller="Home" asp-action="Values">
                 <i class="bi bi-person-heart"></i> Değerlerim

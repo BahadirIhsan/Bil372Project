@@ -1,0 +1,102 @@
+@model Bil372Project.PresentationLayer.Models.GoalViewModel
+
+@{
+    Layout = "~/Views/Shared/_MainLayout.cshtml";
+    ViewData["Title"] = "Hedef";
+}
+
+<section class="glass-card mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div>
+            <h1 class="fw-bold mb-1">Hedeflerini Güncelle</h1>
+            <p class="text-muted mb-0">Su, aktivite ve kilo hedeflerini burada tutarak göstergede takip edebilirsin.</p>
+        </div>
+        <div class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2">
+            @if (Model?.UpdatedAt != null)
+            {
+                <span>Son güncelleme: @Model.UpdatedAt?.ToLocalTime().ToString("g")</span>
+            }
+            else
+            {
+                <span>Henüz hedef eklenmedi</span>
+            }
+        </div>
+    </div>
+</section>
+
+@if (TempData["GoalUpdated"] != null)
+{
+    <div class="alert alert-success">@TempData["GoalUpdated"]</div>
+}
+
+<section class="glass-card">
+    <form asp-action="Goals" method="post" class="row g-4">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Kilo Hedefi</h5>
+                    <p class="text-muted small">Hedef kilonu ve bu hedefe kaç haftada ulaşmak istediğini paylaş.</p>
+
+                    <div class="mb-3">
+                        <label asp-for="TargetWeightKg" class="form-label"></label>
+                        <input asp-for="TargetWeightKg" class="form-control" placeholder="Örn. 68" />
+                        <span asp-validation-for="TargetWeightKg" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-0">
+                        <label asp-for="GoalDurationWeeks" class="form-label"></label>
+                        <input asp-for="GoalDurationWeeks" class="form-control" placeholder="Örn. 12" />
+                        <span asp-validation-for="GoalDurationWeeks" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Su ve Aktivite</h5>
+                    <p class="text-muted small">Günlük su hedefini, bugün içtiğin suyu ve haftalık aktivite planını kaydet.</p>
+
+                    <div class="mb-3">
+                        <label asp-for="DailyWaterTarget" class="form-label"></label>
+                        <input asp-for="DailyWaterTarget" class="form-control" placeholder="Örn. 8" />
+                        <span asp-validation-for="DailyWaterTarget" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="WaterConsumedToday" class="form-label"></label>
+                        <input asp-for="WaterConsumedToday" class="form-control" placeholder="Bugünkü bardak sayısı" />
+                        <span asp-validation-for="WaterConsumedToday" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="WeeklyActivityTarget" class="form-label"></label>
+                        <input asp-for="WeeklyActivityTarget" class="form-control" placeholder="Örn. 4" />
+                        <span asp-validation-for="WeeklyActivityTarget" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-0">
+                        <label asp-for="MotivationNote" class="form-label"></label>
+                        <textarea asp-for="MotivationNote" class="form-control" rows="3" placeholder="Kendine küçük bir not bırak"></textarea>
+                        <span asp-validation-for="MotivationNote" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="text-muted small">
+                    Hedeflerini düzenli güncellersen gösterge panelinde ilerlemeni daha net görebilirsin.
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-save me-2"></i> Kaydet
+                </button>
+            </div>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

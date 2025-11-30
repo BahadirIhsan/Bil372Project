@@ -31,6 +31,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<UserSettingsDtoValidator>()
 builder.Services.AddScoped<IModelInputService, ModelInputService>();
 builder.Services.AddScoped<IAiDietService, AiDietService>();
 builder.Services.AddScoped<IDietPlanService, DietPlanService>();
+builder.Services.AddScoped<IGoalService, GoalService>();
 
 builder.Services.AddHttpClient<IAiDietService, AiDietService>(client =>
 {

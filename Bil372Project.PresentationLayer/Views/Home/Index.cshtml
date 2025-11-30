@@ -22,7 +22,11 @@
         <div class="col-lg-5">
             <div class="position-relative p-4 rounded-4 text-white" style="background: linear-gradient(135deg,#30d0d0,#0575e6);">
                 <h5 class="text-uppercase text-white-50">Günün İpucu</h5>
-                <p class="fs-5 fw-semibold mb-4">Su tüketimini takip et! Her saat başı bir bardak su içmek enerji seviyeni korumana yardımcı olur.</p>
+                <p class="fs-5 fw-semibold mb-4">
+                    @(!string.IsNullOrWhiteSpace(Model.TipOfDay)
+                        ? Model.TipOfDay
+                        : "Su tüketimini takip et! Her saat başı bir bardak su içmek enerji seviyeni korumana yardımcı olur.")
+                </p>                
                 <span class="badge bg-white text-primary fw-semibold px-3 py-2">Hedef: 8 Bardak</span>
             </div>
         </div>
@@ -87,13 +91,21 @@
 
     <div class="stat-card">
         <h5>Haftalık Aktivite</h5>
-        <span class="value">5 <small class="fs-6">seans</small></span>
-        <span class="text-muted">Hedef: 4 seans</span>
+        <span class="value">@Model.WeeklyDietPlans <small class="fs-6">plan</small></span>
+        <span class="text-muted">
+            @(Model.WeeklyActivityTarget.HasValue
+                ? $"Hedef: {Model.WeeklyActivityTarget} seans"
+                : "Hedef henüz belirlenmedi")
+        </span>
     </div>
     <div class="stat-card">
         <h5>Su Takibi</h5>
-        <span class="value">8</span>
-        <span class="text-muted">Hadi 8 bardak su içelim bugün!</span>
+        <span class="value">@(Model.WaterConsumedToday ?? 0)</span>
+        <span class="text-muted">
+            @(Model.DailyWaterTarget.HasValue
+                ? $"Hedef: {Model.DailyWaterTarget} bardak"
+                : "Su hedefini Hedef sayfasında ekleyebilirsin")
+        </span>
     </div>
 </div>
 
@@ -160,22 +172,34 @@
             <div class="program-step">
                 <div class="step-index">1</div>
                 <div>
-                    <h6>Günün hedefini belirle</h6>
-                    <p class="text-muted small mb-0">Bugün 8.000 adım atmayı hedefle ve uygulamada işaretlemeyi unutma.</p>
+                    <h6>Hedef kilon</h6>
+                    <p class="text-muted small mb-0">
+                        @(Model.TargetWeightKg.HasValue
+                            ? $"Hedefin: {Model.TargetWeightKg:0.0} kg"
+                            : "Henüz bir hedef kilo eklemedin")
+                    </p>
                 </div>
             </div>
             <div class="program-step">
                 <div class="step-index">2</div>
                 <div>
-                    <h6>Esneme molaları ekle</h6>
-                    <p class="text-muted small mb-0">Her 90 dakikada bir 5 dakikalık esneme planla. Vücudunu dinç tut!</p>
+                    <h6>Beraber geçen haftalar</h6>
+                    <p class="text-muted small mb-0">
+                        @(Model.GoalDurationWeeks.HasValue
+                            ? $"Bu yolculuk için {Model.GoalDurationWeeks} hafta planladık, birlikte başaracağız."
+                            : "Süre hedefini belirlemek için Hedef sayfasına göz at.")
+                    </p>
                 </div>
             </div>
             <div class="program-step mb-0">
                 <div class="step-index">3</div>
                 <div>
-                    <h6>Akşam değerlendirmesi yap</h6>
-                    <p class="text-muted small mb-0">Günün sonunda hislerini not al, hedeflerine ne kadar yaklaştığını gözden geçir.</p>
+                    <h6>Bugünkü notun</h6>
+                    <p class="text-muted small mb-0">
+                        @(!string.IsNullOrWhiteSpace(Model.MotivationNote)
+                            ? Model.MotivationNote
+                            : "Kendine küçük bir motivasyon cümlesi bırakmayı unutma.")
+                    </p>
                 </div>
             </div>
         </div>

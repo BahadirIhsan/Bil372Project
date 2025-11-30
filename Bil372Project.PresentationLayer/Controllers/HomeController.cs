@@ -12,18 +12,35 @@ namespace Bil372Project.PresentationLayer.Controllers;
 [Authorize]
 public class HomeController : Controller
 {
+    private static readonly string[] DailyTips =
+    {
+        "Su tüketimini takip et! Her saat başı bir bardak su içmek enerji seviyeni korumana yardımcı olur.",
+        "Güne dengeli bir kahvaltıyla başla; protein ve lif uzun süre tok kalmanı sağlar.",
+        "Kısa yürüyüş molaları vererek odaklanmanı ve kalori yakımını artırabilirsin.",
+        "Uyku düzenine dikkat et; 7-8 saatlik kaliteli uyku metabolizmanı destekler.",
+        "Ara öğünlerde taze meyve veya çiğ kuruyemiş tercih ederek kan şekerini dengede tut.",
+        "Ekran başında uzun süre kalıyorsan her 30 dakikada bir esneme hareketleri yap.",
+        "Şekerli içecekler yerine limonlu su veya bitki çayı tercih ederek kalori alımını azalt.",
+        "Protein hedefini tutturmak için her öğüne yumurta, yoğurt veya baklagil eklemeyi unutma.",
+        "Hedeflerini yazılı tut ve haftalık küçük kazanımları kutla; motivasyonun artsın.",
+        "Günlük adım sayını takip et; 8.000 adım enerjini yükseltir ve stresini azaltır."
+    };
+    
     private readonly IUserMeasurementService _userMeasurementService;
     private readonly IAppUserService _userService;
     private readonly IDietPlanService _dietPlanService;
+    private readonly IGoalService _goalService;
 
     public HomeController(
         IUserMeasurementService userMeasurementService,
         IAppUserService userService,
-        IDietPlanService dietPlanService)
+        IDietPlanService dietPlanService,
+        IGoalService goalService)
     {
         _userMeasurementService = userMeasurementService;
         _userService = userService;
         _dietPlanService = dietPlanService;
+        _goalService = goalService;
     }
 
     // Dashboard
@@ -34,8 +51,12 @@ public class HomeController : Controller
 
         var stats = await _userMeasurementService.GetDashboardStatsAsync(userId);
         
+        var goal = await _goalService.GetLatestGoalAsync(userId);
+        
         var plans = await _dietPlanService.GetUserPlansAsync(userId);
         var latestPlan = plans.FirstOrDefault();
+        var weeklyPlanCount = plans.Count(p => p.GeneratedAt >= DateTime.UtcNow.AddDays(-7));
+
 
         var model = new DashboardViewModel
         {
@@ -43,6 +64,14 @@ public class HomeController : Controller
             CurrentBmi              = stats.CurrentBmi,          // şimdilik null olabilir
             WeightChangeLastMonthKg = stats.WeightChangeLastMonthKg,
             BmiCategory             = stats.BmiCategory,
+            TargetWeightKg          = goal?.TargetWeightKg,
+            GoalDurationWeeks       = goal?.GoalDurationWeeks,
+            DailyWaterTarget        = goal?.DailyWaterTarget,
+            WaterConsumedToday      = goal?.WaterConsumedToday,
+            WeeklyActivityTarget    = goal?.WeeklyActivityTarget,
+            MotivationNote          = goal?.MotivationNote,
+            GoalUpdatedAt           = goal?.UpdatedAt,
+            WeeklyDietPlans         = weeklyPlanCount,
             TodayPlan = latestPlan == null
                 ? null
                 : new TodayDietPlanViewModel
@@ -52,10 +81,55 @@ public class HomeController : Controller
                     Dinner      = latestPlan.Dinner,
                     Snack       = latestPlan.Snack,
                     GeneratedAt = latestPlan.GeneratedAt
-                }
+                },
+            TipOfDay = DailyTips[Math.Abs(HashCode.Combine(userId, DateTime.UtcNow.Ticks)) % DailyTips.Length]
         };
 
         return View(model);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Goals()
+    {
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var goal = await _goalService.GetLatestGoalAsync(userId);
+
+        var model = new GoalViewModel
+        {
+            TargetWeightKg = goal?.TargetWeightKg,
+            GoalDurationWeeks = goal?.GoalDurationWeeks,
+            DailyWaterTarget = goal?.DailyWaterTarget,
+            WaterConsumedToday = goal?.WaterConsumedToday,
+            WeeklyActivityTarget = goal?.WeeklyActivityTarget,
+            MotivationNote = goal?.MotivationNote,
+            UpdatedAt = goal?.UpdatedAt
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Goals(GoalViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var input = new UserGoalInput
+        {
+            TargetWeightKg = model.TargetWeightKg,
+            GoalDurationWeeks = model.GoalDurationWeeks,
+            DailyWaterTarget = model.DailyWaterTarget,
+            WaterConsumedToday = model.WaterConsumedToday,
+            WeeklyActivityTarget = model.WeeklyActivityTarget,
+            MotivationNote = model.MotivationNote
+        };
+
+        await _goalService.SaveGoalAsync(userId, input);
+        TempData["GoalUpdated"] = "Hedeflerin kaydedildi.";
+        return RedirectToAction("Goals");
     }
 
     // Değerlerim (son ölçüm)
