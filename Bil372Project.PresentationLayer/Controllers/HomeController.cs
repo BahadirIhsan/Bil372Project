@@ -107,6 +107,21 @@ public class HomeController : Controller
 
         return View(model);
     }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> IncrementWater()
+    {
+        int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+        var updatedWater = await _goalService.IncrementWaterAsync(userId);
+
+        if (updatedWater == null)
+            return BadRequest(new { message = "Önce bir su hedefi eklemelisin." });
+
+        return Json(new { waterConsumedToday = updatedWater });
+    }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

@@ -55,4 +55,21 @@ public class GoalService : IGoalService
         await _context.SaveChangesAsync();
         return goal.Id;
     }
+    
+    public async Task<int?> IncrementWaterAsync(int userId, int increment = 1)
+    {
+        var latestGoal = await _context.UserGoals
+            .Where(g => g.UserId == userId)
+            .OrderByDescending(g => g.UpdatedAt)
+            .FirstOrDefaultAsync();
+
+        if (latestGoal == null)
+            return null;
+
+        latestGoal.WaterConsumedToday = (latestGoal.WaterConsumedToday ?? 0) + increment;
+        latestGoal.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+        return latestGoal.WaterConsumedToday;
+    }
 }

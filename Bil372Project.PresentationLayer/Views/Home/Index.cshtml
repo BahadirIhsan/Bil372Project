@@ -1,4 +1,5 @@
 @model Bil372Project.PresentationLayer.Models.DashboardViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     Layout = "~/Views/Shared/_MainLayout.cshtml";
@@ -32,6 +33,63 @@
         </div>
     </div>
 </div>
+
+@{
+    var antiforgeryTokens = Antiforgery.GetAndStoreTokens(Context);
+}
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const button = document.getElementById('water-increment-btn');
+            const valueEl = document.getElementById('water-consumed-value');
+            const statusEl = document.getElementById('water-increment-status');
+            if (!button || !valueEl) return;
+
+            const token = @System.Text.Json.JsonSerializer.Serialize(antiforgeryTokens.RequestToken);
+            const endpoint = '@Url.Action("IncrementWater", "Home")';
+
+            const setStatus = (text, isError = false) => {
+                if (!statusEl) return;
+                statusEl.textContent = text;
+                statusEl.classList.toggle('text-danger', isError);
+            };
+
+            button.addEventListener('click', async () => {
+                button.disabled = true;
+                setStatus('Kaydediliyor...');
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: '{}'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error();
+                    }
+
+                    const data = await response.json();
+                    if (data && typeof data.waterConsumedToday === 'number') {
+                        valueEl.textContent = data.waterConsumedToday;
+                    }
+
+                    setStatus('Güncellendi');
+                } catch (error) {
+                    setStatus('Kaydedilemedi. Lütfen hedef eklediğinden emin ol.', true);
+                } finally {
+                    setTimeout(() => setStatus(''), 1500);
+                    button.disabled = false;
+                }
+            });
+        })();
+    </script>
+}
 
 <div class="stat-grid">
     <div class="stat-card">
@@ -100,7 +158,13 @@
     </div>
     <div class="stat-card">
         <h5>Su Takibi</h5>
-        <span class="value">@(Model.WaterConsumedToday ?? 0)</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="value" id="water-consumed-value">@(Model.WaterConsumedToday ?? 0)</span>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="water-increment-btn" aria-label="Su tüketimini bir bardak artır">
+                <i class="bi bi-arrow-up"></i>
+            </button>
+        </div>
+        <div class="text-muted small mt-1" id="water-increment-status"></div>        
         <span class="text-muted">
             @(Model.DailyWaterTarget.HasValue
                 ? $"Hedef: {Model.DailyWaterTarget} bardak"
