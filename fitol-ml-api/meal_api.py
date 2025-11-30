@@ -27,10 +27,10 @@ app = FastAPI(
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "models")
 
 MEAL_MODEL_PATHS = {
-    "breakfast": os.path.join(MODELS_DIR, "rf_breakfast.pkl"),
-    "lunch": os.path.join(MODELS_DIR, "rf_lunch.pkl"),
-    "dinner": os.path.join(MODELS_DIR, "rf_dinner.pkl"),
-    "snack": os.path.join(MODELS_DIR, "rf_snack.pkl"),
+    "breakfast": os.path.join(MODELS_DIR, "rf_merge_breakfast.pkl"),
+    "lunch": os.path.join(MODELS_DIR, "rf_merge_lunch.pkl"),
+    "dinner": os.path.join(MODELS_DIR, "rf_merge_dinner.pkl"),
+    "snack": os.path.join(MODELS_DIR, "rf_merge_snack.pkl"),
 }
 
 models: Dict[str, Any] = {}

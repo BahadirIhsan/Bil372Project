@@ -32,7 +32,6 @@ public class UserMeasurementService : IUserMeasurementService
             HeightCm      = measure.HeightCm,
             WeightKg      = measure.WeightKg,
             Diseases      = measure.Diseases,
-            // İleride ActivityLevel / DietaryPreference ekleriz
             LastUpdatedAt = measure.UpdatedAt
         };
     }
@@ -53,13 +52,13 @@ public class UserMeasurementService : IUserMeasurementService
             HeightCm      = input.HeightCm,
             WeightKg      = input.WeightKg,
             Diseases      = string.IsNullOrWhiteSpace(input.Diseases)  ? null : input.Diseases,
-            ActivityLevel = input.ActivityLevel,        // yeni
-            DietaryPreference = input.DietaryPreference,// yeni
+            ActivityLevel = input.ActivityLevel,        
+            DietaryPreference = input.DietaryPreference,
             UpdatedAt     = DateTime.UtcNow
         };
 
         _context.UserMeasures.Add(measure);
-        await _context.SaveChangesAsync();   // 🔹 measure.Id burada oluşur
+        await _context.SaveChangesAsync();   // measure.Id burada oluşur
 
         // 2) BMI Hesabı
         double bmi = measure.WeightKg / Math.Pow(measure.HeightCm / 100.0, 2);
