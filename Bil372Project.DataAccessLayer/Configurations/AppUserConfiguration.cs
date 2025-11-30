@@ -23,6 +23,10 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         entity.Property(u => u.Password)
             .HasMaxLength(200)
             .IsRequired();
+        
+        entity.Property(u => u.IsAdmin)
+            .IsRequired()
+            .HasDefaultValue(false);
 
         entity.HasIndex(u => u.Email)
             .IsUnique();

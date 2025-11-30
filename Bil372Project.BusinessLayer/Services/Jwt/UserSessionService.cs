@@ -14,7 +14,8 @@ public class UserSessionService : IUserSessionService
         {
             UserId = user.Id,
             Email = user.Email,
-            FullName = user.FullName
+            FullName = user.FullName,
+            IsAdmin = user.IsAdmin        
         };
     }
 
@@ -24,7 +25,8 @@ public class UserSessionService : IUserSessionService
         {
             new(JwtRegisteredClaimNames.Sub, session.UserId.ToString()),
             new(JwtRegisteredClaimNames.Email, session.Email),
-            new(JwtRegisteredClaimNames.UniqueName, session.FullName)
+            new(JwtRegisteredClaimNames.UniqueName, session.FullName),
+            new(ClaimTypes.Role, session.IsAdmin ? "Admin" : "User")        
         };
     }
 }

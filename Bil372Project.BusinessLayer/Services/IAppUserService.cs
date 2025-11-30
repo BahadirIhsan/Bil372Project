@@ -14,4 +14,5 @@ public interface IAppUserService
     Task<ServiceResult> UpdateSettingsAsync(int userId, UserSettingsDto input);
 
     Task<ServiceResult> RegisterAsync(RegisterUserDto dto);
+    Task EnsureAdminUserAsync(string fullName, string email, string password);
 }

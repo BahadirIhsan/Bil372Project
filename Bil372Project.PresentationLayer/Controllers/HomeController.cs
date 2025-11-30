@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bil372Project.PresentationLayer.Controllers;
 
-[Authorize]
+[Authorize(Roles = "User")]
 public class HomeController : Controller
 {
     private static readonly string[] DailyTips =

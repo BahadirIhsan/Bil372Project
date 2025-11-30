@@ -1,0 +1,202 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Paneli";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row g-4">
+        <div class="col-12 col-xl-5">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="card-title mb-0">Kullanıcı Filtreleme</h5>
+                            <small class="text-muted">E-posta ile filtrele ve kullanıcı bilgilerini listele.</small>
+                        </div>
+                        <span class="badge bg-primary">Max 50 kayıt/sayfa</span>
+                    </div>
+                    <form method="get" class="row g-2 mb-3">
+                        <input type="hidden" name="dietUserEmail" value="@Model.DietUserEmail" />
+                        <input type="hidden" name="breakfastKeyword" value="@Model.BreakfastKeyword" />
+                        <input type="hidden" name="dietPage" value="@Model.DietPage" />
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">E-posta</label>
+                            <input type="email" name="userEmail" class="form-control" placeholder="user@example.com" value="@Model.UserEmailFilter" />
+                        </div>
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-search"></i> Filtrele
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Ad Soyad</th>
+                                    <th>E-posta</th>
+                                    <th>Telefon</th>
+                                    <th>Şehir/Ülke</th>
+                                    <th>Admin</th>
+                                    <th>Güncellendi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.Users.Items.Any())
+                            {
+                                foreach (var user in Model.Users.Items)
+                                {
+                                    <tr>
+                                        <td class="text-muted">@user.Id</td>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>@(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "-" : user.PhoneNumber)</td>
+                                        <td>@($"{user.City ?? "-"} / {user.Country ?? "-"}")</td>
+                                        <td>
+                                            @if (user.IsAdmin)
+                                            {
+                                                <span class="badge bg-danger">Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Kullanıcı</span>
+                                            }
+                                        </td>
+                                        <td>@user.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Kayıt bulunamadı.</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (Model.Users.TotalPages > 1)
+                    {
+                        <nav aria-label="Kullanıcı sayfaları" class="mt-2">
+                            <ul class="pagination pagination-sm mb-0">
+                                @for (int page = 1; page <= Model.Users.TotalPages; page++)
+                                {
+                                    <li class='page-item @(page == Model.Users.Page ? "active" : string.Empty)'>
+                                        <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-userPage="@(page)"
+                                           asp-route-userEmail="@(Model.UserEmailFilter)"
+                                           asp-route-dietUserEmail="@(Model.DietUserEmail)"
+                                           asp-route-breakfastKeyword="@(Model.BreakfastKeyword)"
+                                           asp-route-dietPage="@(Model.DietPage)">@(page)</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="card-title mb-0">Diyet Listeleri</h5>
+                            <small class="text-muted">E-posta ve kahvaltı anahtar kelimesi ile filtreleyin.</small>
+                        </div>
+                        <span class="badge bg-primary">Max 50 kayıt/sayfa</span>
+                    </div>
+
+                    <form method="get" class="row g-2 mb-3">
+                        <input type="hidden" name="userEmail" value="@Model.UserEmailFilter" />
+                        <input type="hidden" name="userPage" value="@Model.UserPage" />
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kullanıcı E-postası (opsiyonel)</label>
+                            <input type="email" name="dietUserEmail" class="form-control" placeholder="user@example.com" value="@Model.DietUserEmail" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kahvaltı Anahtar Kelimesi</label>
+                            <input type="text" name="breakfastKeyword" class="form-control" placeholder="Örn: fruit" value="@Model.BreakfastKeyword" />
+                        </div>
+                        <div class="col-12 d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-filter"></i> Diyetleri Filtrele
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Kullanıcı</th>
+                                    <th>E-posta</th>
+                                    <th>Kahvaltı</th>
+                                    <th>Öğle</th>
+                                    <th>Akşam</th>
+                                    <th>Ara Öğün</th>
+                                    <th>Versiyon</th>
+                                    <th>Üretim</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if (Model.DietPlans.Items.Any())
+                            {
+                                foreach (var plan in Model.DietPlans.Items)
+                                {
+                                    <tr>
+                                        <td class="text-muted">@plan.Id</td>
+                                        <td>@plan.UserFullName</td>
+                                        <td>@plan.UserEmail</td>
+                                        <td>@plan.Breakfast</td>
+                                        <td>@plan.Lunch</td>
+                                        <td>@plan.Dinner</td>
+                                        <td>@plan.Snack</td>
+                                        <td>@(string.IsNullOrWhiteSpace(plan.ModelVersion) ? "-" : plan.ModelVersion)</td>
+                                        <td>@plan.GeneratedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted">Diyet listesi bulunamadı.</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (Model.DietPlans.TotalPages > 1)
+                    {
+                        <nav aria-label="Diyet sayfaları" class="mt-2">
+                            <ul class="pagination pagination-sm mb-0">
+                                @for (int page = 1; page <= Model.DietPlans.TotalPages; page++)
+                                {
+                                    <li class='page-item @(page == Model.DietPlans.Page ? "active" : string.Empty)'>
+                                        <a class="page-link"
+                                           asp-action="Index"
+                                           asp-route-dietPage="@(page)"
+                                           asp-route-userEmail="@(Model.UserEmailFilter)"
+                                           asp-route-userPage="@(Model.UserPage)"
+                                           asp-route-dietUserEmail="@(Model.DietUserEmail)"
+                                           asp-route-breakfastKeyword="@(Model.BreakfastKeyword)">@(page)</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

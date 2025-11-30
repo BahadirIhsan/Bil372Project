@@ -43,7 +43,9 @@ public class AccountController : Controller
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User"),
+                new Claim("IsAdmin", user.IsAdmin.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -61,6 +63,9 @@ public class AccountController : Controller
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 principal,
                 authProperties);
+            
+            if (user.IsAdmin)
+                return RedirectToAction("Index", "Admin");
 
             return RedirectToAction("Index", "Home");
         }

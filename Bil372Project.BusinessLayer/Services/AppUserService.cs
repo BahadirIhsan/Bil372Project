@@ -209,6 +209,38 @@ public class AppUserService : IAppUserService
         }
         
     }
+    
+    public async Task EnsureAdminUserAsync(string fullName, string email, string password)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return;
+
+        // Admin zaten var ise işlem yapma
+        if (await _context.Users.AnyAsync(u => u.IsAdmin))
+            return;
+
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (existingUser != null)
+        {
+            existingUser.IsAdmin = true;
+            existingUser.Password = HashPassword(password);
+            existingUser.FullName = string.IsNullOrWhiteSpace(fullName) ? existingUser.FullName : fullName;
+            await _context.SaveChangesAsync();
+            return;
+        }
+
+        var adminUser = new AppUser
+        {
+            FullName = string.IsNullOrWhiteSpace(fullName) ? "Admin" : fullName,
+            Email = email,
+            Password = HashPassword(password),
+            IsAdmin = true
+        };
+
+        _context.Users.Add(adminUser);
+        await _context.SaveChangesAsync();
+    }
 
     private bool VerifyPassword(string storedPassword, string inputPassword)
     {

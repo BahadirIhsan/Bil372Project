@@ -43,6 +43,8 @@ builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 
 builder.Services.AddHttpClient<IAiDietService, AiDietService>(client =>
 {
@@ -79,6 +81,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         };
     });
 
+builder.Services.AddAuthorization();
 
 // dependency injection
 builder.Services.AddScoped<IAppUserService, AppUserService>();
@@ -90,6 +93,17 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+    
+    var adminOptions = builder.Configuration.GetSection("AdminUser").Get<AdminUserOptions>();
+
+    if (adminOptions is not null && !string.IsNullOrWhiteSpace(adminOptions.Email))
+    {
+        var appUserService = scope.ServiceProvider.GetRequiredService<IAppUserService>();
+        await appUserService.EnsureAdminUserAsync(
+            adminOptions.FullName ?? "Admin",
+            adminOptions.Email,
+            string.IsNullOrWhiteSpace(adminOptions.Password) ? "Admin123!" : adminOptions.Password);
+    }
 }
 
 // Configure the HTTP request pipeline.

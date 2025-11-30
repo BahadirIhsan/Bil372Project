@@ -8,6 +8,9 @@ public class AppUser
     // şimdilik düz string ileride hashe çeviririz
     public string Password { get; set; } = string.Empty;
     
+    public bool IsAdmin { get; set; }
+
+    
     public string? PhoneNumber { get; set; }   
     public DateTime? BirthDate { get; set; }   
     public string? City { get; set; }          
