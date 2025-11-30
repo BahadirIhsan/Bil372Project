@@ -39,6 +39,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         entity.Property(u => u.Bio)
             .HasMaxLength(500);
         
+        entity.Property(u => u.UpdatedAt)
+            .IsConcurrencyToken();
+        
         // 1 User -> n UserMeasure
         entity.HasMany(u => u.UserMeasures)
             .WithOne(m => m.User)

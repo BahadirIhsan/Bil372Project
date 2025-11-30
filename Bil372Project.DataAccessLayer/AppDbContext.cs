@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
     public DbSet<MeasurementForMl> MeasurementsForMl { get; set; }
     public DbSet<UserDietPlan> UserDietPlans { get; set; }         
     public DbSet<UserGoal> UserGoals { get; set; }
+    public DbSet<AuditLog> AuditLogs { get; set; }
+
 
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

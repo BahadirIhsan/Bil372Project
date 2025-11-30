@@ -1,3 +1,4 @@
+using System.Data;
 using Bil372Project.BusinessLayer.Dtos;
 using Bil372Project.DataAccessLayer;
 using Bil372Project.EntityLayer.Entities;
@@ -9,17 +10,20 @@ namespace Bil372Project.BusinessLayer.Services;
 public class AppUserService : IAppUserService
 {
     private readonly AppDbContext _context;
+    private readonly IAuditLogService _auditLogService;
     private readonly IValidator<RegisterUserDto> _registerValidator;
     private readonly IValidator<UserSettingsDto> _settingsValidator;
     private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
 
     public AppUserService(
         AppDbContext context,
+        IAuditLogService auditLogService,
         IValidator<RegisterUserDto> registerValidator,
         IValidator<UserSettingsDto> settingsValidator,
         IValidator<ChangePasswordDto> changePasswordValidator)
     {
         _context = context;
+        _auditLogService = auditLogService;
         _registerValidator = registerValidator;
         _settingsValidator = settingsValidator;
         _changePasswordValidator = changePasswordValidator;
@@ -60,8 +64,22 @@ public class AppUserService : IAppUserService
             Bio         = dto.Bio
         };
 
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+        
+        // audit log kaydı için bu blok gerekli
+        await _auditLogService.LogAsync(user.Id, "Users", "Register", null, new
+        {
+            user.FullName,
+            user.Email,
+            user.PhoneNumber,
+            user.BirthDate,
+            user.City,
+            user.Country
+        });
+
+        await transaction.CommitAsync();
 
         return ServiceResult.Success();
     }
@@ -104,7 +122,20 @@ public class AppUserService : IAppUserService
 
         if (emailTaken)
             return ServiceResult.Failed(nameof(UserSettingsDto.Email), "Bu e-posta başka bir kullanıcı tarafından kullanılıyor.");
+        
+        var oldValues = new
+        {
+            user.FullName,
+            user.Email,
+            user.PhoneNumber,
+            user.BirthDate,
+            user.City,
+            user.Country,
+            user.Bio
+        };
 
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        
         user.FullName    = input.FullName;
         user.Email       = input.Email;
         user.PhoneNumber = input.PhoneNumber;
@@ -112,10 +143,32 @@ public class AppUserService : IAppUserService
         user.City        = input.City;
         user.Country     = input.Country;
         user.Bio         = input.Bio;
+        user.UpdatedAt   = DateTime.UtcNow;
+        
+        try
+        {
+            await _context.SaveChangesAsync();
 
-        await _context.SaveChangesAsync();
+            await _auditLogService.LogAsync(user.Id, "Users", "Update", oldValues, new
+            {
+                user.FullName,
+                user.Email,
+                user.PhoneNumber,
+                user.BirthDate,
+                user.City,
+                user.Country,
+                user.Bio
+            });
 
-        return ServiceResult.Success();
+            await transaction.CommitAsync();
+
+            return ServiceResult.Success();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            await transaction.RollbackAsync();
+            return ServiceResult.Failed(string.Empty, "Profil güncellenirken eşzamanlı bir değişiklik tespit edildi. Lütfen tekrar deneyin.");
+        }
     }
 
     public async Task<ServiceResult> ChangePasswordAsync(ChangePasswordDto dto)
@@ -130,11 +183,31 @@ public class AppUserService : IAppUserService
 
         if (!VerifyPassword(user.Password, dto.CurrentPassword))
             return ServiceResult.Failed(nameof(dto.CurrentPassword), "Mevcut şifreniz yanlış.");
+        
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
 
         user.Password = HashPassword(dto.NewPassword);
-        await _context.SaveChangesAsync();
+        user.UpdatedAt = DateTime.UtcNow;
 
-        return ServiceResult.Success();
+        try
+        {
+            await _context.SaveChangesAsync();
+
+            await _auditLogService.LogAsync(user.Id, "Users", "ChangePassword", null, new
+            {
+                Message = "Password updated"
+            });
+
+            await transaction.CommitAsync();
+
+            return ServiceResult.Success();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            await transaction.RollbackAsync();
+            return ServiceResult.Failed(string.Empty, "Şifre güncellenirken eşzamanlı bir değişiklik oluştu. Lütfen tekrar deneyin.");
+        }
+        
     }
 
     private bool VerifyPassword(string storedPassword, string inputPassword)

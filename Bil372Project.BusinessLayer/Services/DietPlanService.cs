@@ -1,3 +1,4 @@
+using System.Data;
 using Bil372Project.BusinessLayer.Dtos;
 using Bil372Project.DataAccessLayer;
 using Bil372Project.EntityLayer.Entities;
@@ -10,15 +11,18 @@ public class DietPlanService : IDietPlanService
     private readonly AppDbContext _context;
     private readonly IModelInputService _modelInputService;
     private readonly IAiDietService _aiDietService;
+    private readonly IAuditLogService _auditLogService;
 
     public DietPlanService(
         AppDbContext context,
         IModelInputService modelInputService,
-        IAiDietService aiDietService)
+        IAiDietService aiDietService,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _modelInputService = modelInputService;
         _aiDietService = aiDietService;
+        _auditLogService = auditLogService;
     }
 
     public async Task<DietOptionsDto> GetDietOptionsForMeasureAsync(int userMeasureId)
@@ -37,6 +41,8 @@ public class DietPlanService : IDietPlanService
         string dinner,
         string snack)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        
         var plan = new UserDietPlan
         {
             UserMeasureId = userMeasureId,
@@ -50,6 +56,21 @@ public class DietPlanService : IDietPlanService
 
         _context.UserDietPlans.Add(plan);
         await _context.SaveChangesAsync();
+        
+        var measureOwnerId = await _context.UserMeasures
+            .Where(m => m.Id == userMeasureId)
+            .Select(m => (int?)m.UserId)
+            .FirstOrDefaultAsync();
+
+        await _auditLogService.LogAsync(measureOwnerId, "UserDietPlans", "Insert", null, new
+        {
+            plan.Id,
+            plan.UserMeasureId,
+            plan.GeneratedAt,
+            plan.ModelVersion
+        });
+
+        await transaction.CommitAsync();
         return plan;
     }
 

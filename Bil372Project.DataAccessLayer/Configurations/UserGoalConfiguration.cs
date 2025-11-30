@@ -19,8 +19,9 @@ public class UserGoalConfiguration : IEntityTypeConfiguration<UserGoal>
             .HasMaxLength(1000);
 
         builder.Property(g => g.UpdatedAt)
-            .IsRequired();
-
+            .IsRequired()
+            .IsConcurrencyToken();
+        
         builder.HasOne(g => g.User)
             .WithMany()
             .HasForeignKey(g => g.UserId)

@@ -42,6 +42,7 @@ builder.Services.AddScoped<IDietPlanService, DietPlanService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
 builder.Services.AddScoped<IUserSessionService, UserSessionService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 builder.Services.AddHttpClient<IAiDietService, AiDietService>(client =>
 {

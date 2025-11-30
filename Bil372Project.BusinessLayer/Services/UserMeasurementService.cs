@@ -1,3 +1,4 @@
+using System.Data;
 using Bil372Project.BusinessLayer.Dtos;
 using Bil372Project.DataAccessLayer;
 using Bil372Project.EntityLayer.Entities;
@@ -8,10 +9,13 @@ namespace Bil372Project.BusinessLayer.Services;
 public class UserMeasurementService : IUserMeasurementService
 {
     private readonly AppDbContext _context;
+    private readonly IAuditLogService _auditLogService;
 
-    public UserMeasurementService(AppDbContext context)
+
+    public UserMeasurementService(AppDbContext context, IAuditLogService auditLogService)
     {
         _context = context;
+        _auditLogService = auditLogService;
     }
 
     public async Task<UserMeasureInput?> GetMeasureAsync(int userId)
@@ -35,14 +39,10 @@ public class UserMeasurementService : IUserMeasurementService
             LastUpdatedAt = measure.UpdatedAt
         };
     }
-
-    Task <int> IUserMeasurementService.SaveMeasureAsync(int userId, UserMeasureInput input)
-    {
-        return SaveMeasureAsync(userId, input);
-    }
-
     public async Task <int> SaveMeasureAsync(int userId, UserMeasureInput input)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        
         // 1) Önce UserMeasure kaydını oluştur
         var measure = new UserMeasure
         {
@@ -82,6 +82,31 @@ public class UserMeasurementService : IUserMeasurementService
 
         _context.MeasurementsForMl.Add(ml);
         await _context.SaveChangesAsync();
+        
+        await _auditLogService.LogAsync(userId, "UserMeasures", "Insert", null, new
+        {
+            measure.Id,
+            measure.Gender,
+            measure.Age,
+            measure.HeightCm,
+            measure.WeightKg,
+            measure.ActivityLevel,
+            measure.DietaryPreference,
+            measure.UpdatedAt
+        });
+
+        await _auditLogService.LogAsync(userId, "MeasurementsForMl", "Insert", null, new
+        {
+            ml.UserMeasureId,
+            ml.Bmi,
+            ml.DailyCalorieTarget,
+            ml.ProteinGrams,
+            ml.FatGrams,
+            ml.SugarGrams,
+            ml.SodiumMg
+        });
+
+        await transaction.CommitAsync();
         
         return measure.Id;
 
@@ -163,11 +188,23 @@ public class UserMeasurementService : IUserMeasurementService
 
     private (double Protein, double Fat, double Sugar, double Sodium) CalculateMacros(double cal)
     {
-        double protein = (cal * 0.30) / 4; // 1g protein = 4 cal
-        double fat     = (cal * 0.25) / 9; // 1g fat = 9 cal
-        double sugar   = (cal * 0.45) / 4; // 1g carb ≈ 4 cal
-        double sodium  = 1500;             // sabit örnek
+        // Datasetten hesaplanan ortalama oranlar
+        const double proteinCalShare = 0.2459;  // Günlük kalorinin %24.59'u protein
+        const double fatCalShare     = 0.2777;  // Günlük kalorinin %27.77'si yağ
+        const double sugarCalShare   = 0.2253;  // Günlük kalorinin %22.53'ü şeker / karbonhidrat
+
+        // Sodyum: dataset ortalaması = 0.0123 * kalori
+        const double sodiumPerCal    = 0.0123;  // 1 kcal başına sodyum birimi
+
+        // Gram hesapları (1g protein = 4 kcal, 1g yağ = 9 kcal, 1g karbonhidrat ≈ 4 kcal)
+        double protein = (cal * proteinCalShare) / 4.0;
+        double fat     = (cal * fatCalShare)     / 9.0;
+        double sugar   = (cal * sugarCalShare)   / 4.0;
+
+        // Sodyum, dataset’teki ölçeğe sadık kalarak
+        double sodium  = cal * sodiumPerCal;
 
         return (protein, fat, sugar, sodium);
     }
+
 }
