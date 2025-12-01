@@ -1,4 +1,5 @@
 using Bil372Project.BusinessLayer.Dtos;
+using Bil372Project.BusinessLayer;
 using Bil372Project.DataAccessLayer;
 using Microsoft.EntityFrameworkCore;
 
@@ -78,6 +79,24 @@ public class AdminService : IAdminService
             .ToListAsync();
 
         return PaginatedResult<AdminUserListItemDto>.Create(users, totalCount, page, pageSize);
+    }
+
+    public async Task<ServiceResult> GrantAdminAsync(int userId)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+            return ServiceResult.Failed(string.Empty, "Kullanıcı bulunamadı.");
+
+        if (user.IsAdmin)
+            return ServiceResult.Success();
+
+        user.IsAdmin = true;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return ServiceResult.Success();
     }
 
     public async Task<PaginatedResult<AdminDietPlanDto>> SearchDietPlansAsync(

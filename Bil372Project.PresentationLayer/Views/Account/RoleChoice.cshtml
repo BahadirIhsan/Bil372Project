@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Yetki Seçimi";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">Hoş geldiniz!</h2>
+                        <p class="text-muted mb-0">Hangi sayfaya gitmek istediğinizi seçebilirsiniz.</p>
+                    </div>
+
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="bi bi-shield-lock me-2 fs-4"></i>
+                        <div>
+                            Bu hesap hem <strong>admin</strong> hem de <strong>kullanıcı</strong> yetkilerine sahip. Aşağıdaki seçeneklerden birini tercih edin.
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <a asp-controller="Admin" asp-action="Index" class="btn btn-danger btn-lg px-4">
+                            <i class="bi bi-speedometer2 me-2"></i>Admin Paneline Git
+                        </a>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-success btn-lg px-4">
+                            <i class="bi bi-house-door me-2"></i>Diyet Alanına Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="roleChoiceModal" tabindex="-1" aria-labelledby="roleChoiceLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="roleChoiceLabel">Devam etmek için seçim yapın</h5>
+            </div>
+            <div class="modal-body">
+                Hangi alana geçmek istersiniz?
+            </div>
+            <div class="modal-footer">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-people"></i> Diyet Alanı
+                </a>
+                <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">
+                    <i class="bi bi-shield-lock"></i> Admin Paneli
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modalElement = document.getElementById("roleChoiceModal");
+            if (!modalElement) return;
+
+            const modal = new bootstrap.Modal(modalElement, {
+                backdrop: 'static',
+                keyboard: false
+            });
+            modal.show();
+        });
+    </script>
+}
