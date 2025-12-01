@@ -16,7 +16,7 @@
                         </div>
                         <span class="badge bg-primary">Max 50 kayıt/sayfa</span>
                     </div>
-                    <form method="get" class="row g-2 mb-3">
+                    <form method="get" class="row g-3 mb-3 admin-filter-form">
                         <input type="hidden" name="dietUserEmail" value="@Model.DietUserEmail" />
                         <input type="hidden" name="breakfastKeyword" value="@Model.BreakfastKeyword" />
                         <input type="hidden" name="lunchKeyword" value="@Model.LunchKeyword" />
@@ -25,17 +25,57 @@
                         <input type="hidden" name="sortOrder" value="@Model.DietSortOrder" />
                         <input type="hidden" name="dietSearch" value="@(Model.HasDietSearch)" />
                         <input type="hidden" name="dietPage" value="@Model.DietPage" />
+                        
                         <div class="col-12">
                             <label class="form-label fw-semibold">E-posta</label>
                             <input type="email" name="userEmail" class="form-control" placeholder="user@example.com" value="@Model.UserEmailFilter" />
                         </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ad Soyad</label>
+                            <input type="text" name="userFullName" class="form-control" placeholder="Örn: Ayşe Yılmaz" value="@Model.UserFullNameFilter" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Şehir</label>
+                            <input type="text" name="userCity" class="form-control" placeholder="Örn: Ankara" value="@Model.UserCityFilter" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Telefon</label>
+                            <input type="text" name="userPhone" class="form-control" placeholder="Örn: +90 555 555 55 55" value="@Model.UserPhoneFilter" />
+                        </div>
+                        
                         <div class="col-12 d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" name="userSearch" value="true" class="btn btn-success">
                                 <i class="bi bi-search"></i> Filtrele
                             </button>
                             <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
                         </div>
                     </form>
+                    
+                    @if (Model.UserSearchApplied)
+                    {
+                        <div class="active-filters mb-3">
+                            <span class="text-muted me-2">Aktif filtreler:</span>
+                            @if (!string.IsNullOrWhiteSpace(Model.UserEmailFilter))
+                            {
+                                <span class="filter-chip"><i class="bi bi-envelope"></i> @Model.UserEmailFilter</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.UserFullNameFilter))
+                            {
+                                <span class="filter-chip"><i class="bi bi-person"></i> @Model.UserFullNameFilter</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.UserCityFilter))
+                            {
+                                <span class="filter-chip"><i class="bi bi-geo-alt"></i> @Model.UserCityFilter</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.UserPhoneFilter))
+                            {
+                                <span class="filter-chip"><i class="bi bi-telephone"></i> @Model.UserPhoneFilter</span>
+                            }
+                        </div>
+                    }
 
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
@@ -51,12 +91,14 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            
                             @if (Model.Users.Items.Any())
                             {
+                                var rowNumber = 1;
                                 foreach (var user in Model.Users.Items)
                                 {
                                     <tr>
-                                        <td class="text-muted">@user.Id</td>
+                                        <td class="text-muted">@rowNumber</td>
                                         <td>@user.FullName</td>
                                         <td>@user.Email</td>
                                         <td>@(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "-" : user.PhoneNumber)</td>
@@ -73,6 +115,7 @@
                                         </td>
                                         <td>@user.UpdatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                     </tr>
+                                    rowNumber++;
                                 }
                             }
                             else
@@ -96,6 +139,10 @@
                                            asp-action="Index"
                                            asp-route-userPage="@(page)"
                                            asp-route-userEmail="@(Model.UserEmailFilter)"
+                                           asp-route-userFullName="@(Model.UserFullNameFilter)"
+                                           asp-route-userCity="@(Model.UserCityFilter)"
+                                           asp-route-userPhone="@(Model.UserPhoneFilter)"
+                                           asp-route-userSearch="true"
                                            asp-route-dietUserEmail="@(Model.DietUserEmail)"
                                            asp-route-breakfastKeyword="@(Model.BreakfastKeyword)"
                                            asp-route-lunchKeyword="@(Model.LunchKeyword)"
@@ -126,6 +173,10 @@
 
                     <form method="get" class="row g-2 mb-3">
                         <input type="hidden" name="userEmail" value="@Model.UserEmailFilter" />
+                        <input type="hidden" name="userFullName" value="@Model.UserFullNameFilter" />
+                        <input type="hidden" name="userCity" value="@Model.UserCityFilter" />
+                        <input type="hidden" name="userPhone" value="@Model.UserPhoneFilter" />
+                        <input type="hidden" name="userSearch" value="@(Model.UserSearchApplied)" />
                         <input type="hidden" name="userPage" value="@Model.UserPage" />
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Kullanıcı E-postası (opsiyonel)</label>
@@ -161,6 +212,33 @@
                             <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
                         </div>
                     </form>
+                    
+                    @if (Model.HasDietSearch)
+                    {
+                        <div class="active-filters mb-3">
+                            <span class="text-muted me-2">Aktif filtreler:</span>
+                            @if (!string.IsNullOrWhiteSpace(Model.DietUserEmail))
+                            {
+                                <span class="filter-chip"><i class="bi bi-envelope"></i> @Model.DietUserEmail</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.BreakfastKeyword))
+                            {
+                                <span class="filter-chip"><i class="bi bi-person"></i> @Model.BreakfastKeyword</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.LunchKeyword))
+                            {
+                                <span class="filter-chip"><i class="bi bi-geo-alt"></i> @Model.LunchKeyword</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.DinnerKeyword))
+                            {
+                                <span class="filter-chip"><i class="bi bi-telephone"></i> @Model.DinnerKeyword</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.SnackKeyword))
+                            {
+                                <span class="filter-chip"><i class="bi bi-telephone"></i> @Model.SnackKeyword</span>
+                            }
+                        </div>
+                    }
 
                     <div class="table-responsive">
                         <table class="table table-striped align-middle">
@@ -224,6 +302,10 @@
                                            asp-action="Index"
                                            asp-route-dietPage="@(page)"
                                            asp-route-userEmail="@(Model.UserEmailFilter)"
+                                           asp-route-userFullName="@(Model.UserFullNameFilter)"
+                                           asp-route-userCity="@(Model.UserCityFilter)"
+                                           asp-route-userPhone="@(Model.UserPhoneFilter)"
+                                           asp-route-userSearch="@(Model.UserSearchApplied)"
                                            asp-route-userPage="@(Model.UserPage)"
                                            asp-route-dietUserEmail="@(Model.DietUserEmail)"
                                            asp-route-breakfastKeyword="@(Model.BreakfastKeyword)"

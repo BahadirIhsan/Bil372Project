@@ -807,6 +807,45 @@ body {
   font-weight: 500;
 }
 
+.admin-filter-form .form-control {
+  background: #f8fafc;
+  border-color: #e5e7eb;
+}
+
+.admin-filter-form .form-control:focus {
+  background: #ffffff;
+  border-color: #30d0d0;
+  box-shadow: 0 0 0 0.2rem rgba(48, 208, 208, 0.2);
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(48, 208, 208, 0.08);
+  border: 1px dashed rgba(48, 208, 208, 0.35);
+  border-radius: 0.75rem;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f2027;
+  border: 1px solid rgba(15, 32, 39, 0.08);
+  box-shadow: 0 4px 12px rgba(15, 32, 39, 0.08);
+  font-weight: 500;
+}
+
+.filter-chip i {
+  color: #30d0d0;
+}
+
 @media (max-width: 992px) {
   .auth-shell {
     flex-direction: column;
