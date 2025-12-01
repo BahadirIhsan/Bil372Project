@@ -104,6 +104,8 @@ using (var scope = app.Services.CreateScope())
             adminOptions.Email,
             string.IsNullOrWhiteSpace(adminOptions.Password) ? "Admin123!" : adminOptions.Password);
     }
+    
+    // await Bil372Project.DataAccessLayer.Seed.FakeDataSeeder.SeedAsync(db, 1000);
 }
 
 // Configure the HTTP request pipeline.
@@ -128,4 +130,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
-app.Run();
+
+
+app.Run();  

@@ -19,6 +19,11 @@
                     <form method="get" class="row g-2 mb-3">
                         <input type="hidden" name="dietUserEmail" value="@Model.DietUserEmail" />
                         <input type="hidden" name="breakfastKeyword" value="@Model.BreakfastKeyword" />
+                        <input type="hidden" name="lunchKeyword" value="@Model.LunchKeyword" />
+                        <input type="hidden" name="dinnerKeyword" value="@Model.DinnerKeyword" />
+                        <input type="hidden" name="snackKeyword" value="@Model.SnackKeyword" />
+                        <input type="hidden" name="sortOrder" value="@Model.DietSortOrder" />
+                        <input type="hidden" name="dietSearch" value="@(Model.HasDietSearch)" />
                         <input type="hidden" name="dietPage" value="@Model.DietPage" />
                         <div class="col-12">
                             <label class="form-label fw-semibold">E-posta</label>
@@ -93,7 +98,12 @@
                                            asp-route-userEmail="@(Model.UserEmailFilter)"
                                            asp-route-dietUserEmail="@(Model.DietUserEmail)"
                                            asp-route-breakfastKeyword="@(Model.BreakfastKeyword)"
-                                           asp-route-dietPage="@(Model.DietPage)">@(page)</a>
+                                           asp-route-lunchKeyword="@(Model.LunchKeyword)"
+                                           asp-route-dinnerKeyword="@(Model.DinnerKeyword)"
+                                           asp-route-snackKeyword="@(Model.SnackKeyword)"
+                                           asp-route-sortOrder="@(Model.DietSortOrder)"
+                                           asp-route-dietPage="@(Model.DietPage)"
+                                           asp-route-dietSearch="@(Model.HasDietSearch)">@(page)</a>                                    
                                     </li>
                                 }
                             </ul>
@@ -109,7 +119,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <h5 class="card-title mb-0">Diyet Listeleri</h5>
-                            <small class="text-muted">E-posta ve kahvaltı anahtar kelimesi ile filtreleyin.</small>
+                            <small class="text-muted">E-posta ve öğün anahtar kelimeleri ile filtreleyin.</small>
                         </div>
                         <span class="badge bg-primary">Max 50 kayıt/sayfa</span>
                     </div>
@@ -125,8 +135,27 @@
                             <label class="form-label fw-semibold">Kahvaltı Anahtar Kelimesi</label>
                             <input type="text" name="breakfastKeyword" class="form-control" placeholder="Örn: fruit" value="@Model.BreakfastKeyword" />
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Öğle Yemeği Anahtar Kelimesi</label>
+                            <input type="text" name="lunchKeyword" class="form-control" placeholder="Örn: chicken" value="@Model.LunchKeyword" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Akşam Yemeği Anahtar Kelimesi</label>
+                            <input type="text" name="dinnerKeyword" class="form-control" placeholder="Örn: salad" value="@Model.DinnerKeyword" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Ara Öğün Anahtar Kelimesi</label>
+                            <input type="text" name="snackKeyword" class="form-control" placeholder="Örn: yogurt" value="@Model.SnackKeyword" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Zamana Göre Sıralama</label>
+                            <select name="sortOrder" class="form-select">
+                                <option value="desc" selected="@(Model.DietSortOrder == "desc" ? "selected" : null)">Yeni - Eski</option>
+                                <option value="asc"  selected="@(Model.DietSortOrder == "asc"  ? "selected" : null)">Eski - Yeni</option>
+                            </select>
+                        </div>
                         <div class="col-12 d-flex gap-2">
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" name="dietSearch" value="true" class="btn btn-success">
                                 <i class="bi bi-filter"></i> Diyetleri Filtrele
                             </button>
                             <a asp-action="Index" class="btn btn-outline-secondary">Temizle</a>
@@ -149,12 +178,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @if (Model.DietPlans.Items.Any())
+                            @if (!Model.HasDietSearch)
                             {
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted">Lütfen filtreleri girip diyet araması yapın.</td>
+                                </tr>
+                            }
+                            else if (Model.DietPlans.Items.Any())
+                            {
+                                var rowNumber = 1;
                                 foreach (var plan in Model.DietPlans.Items)
                                 {
                                     <tr>
-                                        <td class="text-muted">@plan.Id</td>
+                                        <td class="text-muted">@rowNumber</td>
                                         <td>@plan.UserFullName</td>
                                         <td>@plan.UserEmail</td>
                                         <td>@plan.Breakfast</td>
@@ -164,6 +200,7 @@
                                         <td>@(string.IsNullOrWhiteSpace(plan.ModelVersion) ? "-" : plan.ModelVersion)</td>
                                         <td>@plan.GeneratedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                     </tr>
+                                    rowNumber++;
                                 }
                             }
                             else
@@ -189,7 +226,12 @@
                                            asp-route-userEmail="@(Model.UserEmailFilter)"
                                            asp-route-userPage="@(Model.UserPage)"
                                            asp-route-dietUserEmail="@(Model.DietUserEmail)"
-                                           asp-route-breakfastKeyword="@(Model.BreakfastKeyword)">@(page)</a>
+                                           asp-route-breakfastKeyword="@(Model.BreakfastKeyword)"
+                                           asp-route-lunchKeyword="@(Model.LunchKeyword)"
+                                           asp-route-dinnerKeyword="@(Model.DinnerKeyword)"
+                                           asp-route-snackKeyword="@(Model.SnackKeyword)"
+                                           asp-route-sortOrder="@(Model.DietSortOrder)"
+                                           asp-route-dietSearch="true">@(page)</a>                                        
                                     </li>
                                 }
                             </ul>

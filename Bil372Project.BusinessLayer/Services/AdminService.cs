@@ -14,7 +14,7 @@ public class AdminService : IAdminService
         _context = context;
     }
 
-    public async Task<PaginatedResult<AdminUserListItemDto>> SearchUsersAsync(string? email, int page, int pageSize)
+    public async Task<PaginatedResult<AdminUserListItemDto>> SearchUsersAsync(string? email, string? fullName, string? city, string? phone, int page, int pageSize)
     {
         page = Math.Max(page, 1);
         pageSize = ClampPageSize(pageSize);
@@ -25,6 +25,35 @@ public class AdminService : IAdminService
         {
             var normalizedEmail = email.Trim().ToLowerInvariant();
             query = query.Where(u => u.Email.ToLower().Contains(normalizedEmail));
+        }
+        
+        if (!string.IsNullOrWhiteSpace(fullName))
+        {
+            var normalizedFullName = fullName.Trim().ToLowerInvariant();
+            query = query.Where(u => u.FullName.ToLower().Contains(normalizedFullName));
+        }
+
+        if (!string.IsNullOrWhiteSpace(city))
+        {
+            var normalizedCity = city.Trim().ToLowerInvariant();
+            query = query.Where(u => u.City != null && u.City.ToLower().Contains(normalizedCity));
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            var normalizedPhone = new string(phone.Where(char.IsDigit).ToArray());
+            if (string.IsNullOrWhiteSpace(normalizedPhone))
+            {
+                normalizedPhone = phone.Trim();
+            }
+
+            query = query.Where(u => u.PhoneNumber != null
+                                     && u.PhoneNumber.Replace(" ", string.Empty)
+                                         .Replace("-", string.Empty)
+                                         .Replace("(", string.Empty)
+                                         .Replace(")", string.Empty)
+                                         .Replace("+", string.Empty)
+                                         .Contains(normalizedPhone));
         }
 
         var totalCount = await query.CountAsync();
@@ -54,6 +83,10 @@ public class AdminService : IAdminService
     public async Task<PaginatedResult<AdminDietPlanDto>> SearchDietPlansAsync(
         string? userEmail,
         string? breakfastKeyword,
+        string? lunchKeyword,
+        string? dinnerKeyword,
+        string? snackKeyword,
+        string sortOrder,
         int page,
         int pageSize)
     {
@@ -77,11 +110,32 @@ public class AdminService : IAdminService
             var normalizedKeyword = breakfastKeyword.Trim().ToLowerInvariant();
             query = query.Where(p => p.Breakfast.ToLower().Contains(normalizedKeyword));
         }
+        
+        if (!string.IsNullOrWhiteSpace(lunchKeyword))
+        {
+            var normalizedKeyword = lunchKeyword.Trim().ToLowerInvariant();
+            query = query.Where(p => p.Lunch.ToLower().Contains(normalizedKeyword));
+        }
+
+        if (!string.IsNullOrWhiteSpace(dinnerKeyword))
+        {
+            var normalizedKeyword = dinnerKeyword.Trim().ToLowerInvariant();
+            query = query.Where(p => p.Dinner.ToLower().Contains(normalizedKeyword));
+        }
+
+        if (!string.IsNullOrWhiteSpace(snackKeyword))
+        {
+            var normalizedKeyword = snackKeyword.Trim().ToLowerInvariant();
+            query = query.Where(p => p.Snack.ToLower().Contains(normalizedKeyword));
+        }
 
         var totalCount = await query.CountAsync();
 
+        query = sortOrder?.Trim().ToLowerInvariant() == "asc"
+            ? query.OrderBy(p => p.GeneratedAt)
+            : query.OrderByDescending(p => p.GeneratedAt);
+        
         var plans = await query
-            .OrderByDescending(p => p.GeneratedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(p => new AdminDietPlanDto
