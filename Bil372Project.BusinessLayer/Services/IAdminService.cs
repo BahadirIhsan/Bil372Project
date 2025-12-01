@@ -1,4 +1,5 @@
 using Bil372Project.BusinessLayer.Dtos;
+using Bil372Project.BusinessLayer;
 
 namespace Bil372Project.BusinessLayer.Services;
 
@@ -10,7 +11,9 @@ public interface IAdminService
         string? city,
         string? phone,
         int page,
-        int pageSize);    
+        int pageSize);
+
+    Task<ServiceResult> GrantAdminAsync(int userId);
     Task<PaginatedResult<AdminDietPlanDto>> SearchDietPlansAsync(
         string? userEmail,
         string? breakfastKeyword,

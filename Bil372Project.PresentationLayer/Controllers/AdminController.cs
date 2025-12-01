@@ -3,7 +3,7 @@ using Bil372Project.BusinessLayer.Services;
 using Bil372Project.PresentationLayer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Bil372Project.PresentationLayer.Controllers;
 
@@ -78,5 +78,59 @@ public class AdminController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> GrantAdmin(
+        int userId,
+        string? userEmail,
+        string? userFullName,
+        string? userCity,
+        string? userPhone,
+        bool userSearch,
+        int userPage,
+        string? dietUserEmail,
+        string? breakfastKeyword,
+        string? lunchKeyword,
+        string? dinnerKeyword,
+        string? snackKeyword,
+        string sortOrder = "desc",
+        bool dietSearch = false,
+        int dietPage = 1)
+    {
+        var result = await _adminService.GrantAdminAsync(userId);
+
+        if (result.Succeeded)
+        {
+            TempData["AdminStatusMessage"] = "Kullanıcıya admin yetkisi verildi.";
+            TempData["AdminStatusType"] = "success";
+        }
+        else
+        {
+            var errorMessage = result.Errors.Values.SelectMany(e => e).FirstOrDefault()
+                              ?? "İşlem gerçekleştirilemedi.";
+
+            TempData["AdminStatusMessage"] = errorMessage;
+            TempData["AdminStatusType"] = "danger";
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            userEmail,
+            userFullName,
+            userCity,
+            userPhone,
+            userSearch = true,
+            userPage = Math.Max(userPage, 1),
+            dietUserEmail,
+            breakfastKeyword,
+            lunchKeyword,
+            dinnerKeyword,
+            snackKeyword,
+            sortOrder,
+            dietSearch,
+            dietPage = Math.Max(dietPage, 1)
+        });
     }
 }

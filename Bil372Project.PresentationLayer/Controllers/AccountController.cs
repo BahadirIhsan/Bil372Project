@@ -5,6 +5,7 @@ using Bil372Project.BusinessLayer.Services;
 using Bil372Project.PresentationLayer.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bil372Project.PresentationLayer.Controllers;
@@ -44,9 +45,18 @@ public class AccountController : Controller
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User"),
                 new Claim("IsAdmin", user.IsAdmin.ToString())
             };
+
+            if (user.IsAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+            }
+            else
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "User"));
+            }
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -65,9 +75,20 @@ public class AccountController : Controller
                 authProperties);
             
             if (user.IsAdmin)
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction(nameof(RoleChoice));
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        public IActionResult RoleChoice()
+        {
+            var isAdmin = User.HasClaim("IsAdmin", bool.TrueString) || User.IsInRole("Admin");
+
+            if (!isAdmin)
+                return RedirectToAction("Index", "Home");
+
+            return View();
         }
 
         [HttpGet]
